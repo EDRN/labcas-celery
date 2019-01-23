@@ -1,0 +1,16 @@
+**/*.pyc
+/bin
+.classpath
+.project
+**/.project
+**/target
+**/logs
+**/.settings
+.pydevproject
+**/.DS_Store
+**/*.zip
+**/*.tar
+**/*.tgz
+**/*.class
+**/bin
+**/$*
