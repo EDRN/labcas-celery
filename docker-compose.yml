@@ -22,7 +22,10 @@ services:
       
   celery-worker:
     image: edrn/labcas-celery
-    container_name: celery-worker
+    #container_name: celery-worker
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_BACKEND_URL=redis://redis:6379/0
     build:
       context: .
     command: ["celery", "-A",  "labcas.celery.worker", "worker", "-l", "info"]

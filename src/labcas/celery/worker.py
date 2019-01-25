@@ -2,14 +2,14 @@
 Celery worker app configured with LabCAS tasks.
 '''
 from celery import Celery
+import os
+
+broker_url = os.environ.get("CELERY_BROKER_URL", "redis://localhost:6379/0")
+backend_url = os.environ.get("CELERY_BACKEND_URL", "redis://localhost:6379/0")
 
 app = Celery('labcas.celery',
-             # FIXME: read from env?
-             broker='redis://redis:6379/0',
-             backend='redis://redis:6379/0',
-             #backend='redis://redis:6379/0',
-             #backend='rpc://',
-             #backend='redis://localhost',
+             broker=broker_url,
+             backend=backend_url,
              include=['labcas.celery.tasks.system'])
 
 # optional configuration
