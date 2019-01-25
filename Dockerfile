@@ -13,6 +13,7 @@ ENV PYTHONPATH /usr/local/src
 RUN pip install --upgrade pip &&\
     pip install --no-cache-dir -r /usr/local/src/requirements.txt
     
+# expose Flower port
 EXPOSE 5555
     
 WORKDIR /usr/local/src
