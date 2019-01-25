@@ -1,0 +1,36 @@
+# docker-compose file to manage the LabCAS/Celery/Redis application
+
+version: '3.3'
+
+networks: 
+  default:
+    external: 
+      name: labcas-network 
+
+services:
+
+  redis:
+    image: redis
+    container_name: redis
+    ports:
+      - 6379:6379
+    # start Redis with data persistence
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      # persist redis data
+      - redis-data:/data
+      
+  celery-worker:
+    image: edrn/labcas-celery
+    container_name: celery-worker
+    build:
+      context: .
+    command: ["celery", "-A",  "labcas.celery.worker", "worker", "-l", "info"]
+    
+  celery-client:
+    image: edrn/labcas-celery
+    container_name: celery-client
+    command: ["tail", "-f", "/dev/null"]
+  
+volumes:
+  redis-data:
