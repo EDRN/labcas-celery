@@ -6,6 +6,7 @@ from celery import Celery
 app = Celery('labcas.celery',
              # FIXME: read from env?
              broker='redis://redis:6379/0',
+             backend='redis://redis:6379/0',
              #backend='redis://redis:6379/0',
              #backend='rpc://',
              #backend='redis://localhost',
