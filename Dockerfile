@@ -5,6 +5,10 @@ ENV LANG=C.UTF-8 LC_ALL=C.UTF-8 PYTHONUNBUFFERED=1
 
 RUN apt-get update
 
+# create non-privileged user
+RUN groupadd -g 999 celery && \
+    useradd -r -u 999 -g celery celery
+
 # install LabCAS-celery source code
 COPY ./src /usr/local/src
 ENV PYTHONPATH /usr/local/src
@@ -17,3 +21,4 @@ RUN pip install --upgrade pip &&\
 EXPOSE 5555
     
 WORKDIR /usr/local/src
+USER celery
