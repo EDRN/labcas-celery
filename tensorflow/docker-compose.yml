@@ -1,0 +1,29 @@
+# docker-compose file that overrides 
+# the standard celery worker container
+# with the tensorflow-enabled worker
+
+version: '3.3'
+
+services:
+
+  celery-worker:
+    image: edrn/labcas-celery-tensorflow
+    build:
+      context: .
+      
+      
+  # init container download the tensorflow data to a shared volume
+  data-download:
+    image: busybox
+    container_name: data-download
+    entrypoint: /usr/local/bin/data_download.sh
+    #command: ["tail", "-f", "/dev/null"]
+    environment: 
+      - TENSORFLOW_DATA=/tmp/MNIST_data
+    volumes:
+      - ./tensorflow/data_download.sh:/usr/local/bin/data_download.sh
+      - tensorflow_data:/tmp/MNIST_data
+      
+volumes:
+  tensorflow_data:
+ 
