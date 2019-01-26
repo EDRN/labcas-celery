@@ -12,38 +12,39 @@ services:
   redis:
     image: redis
     container_name: redis
+    # expose port to client running on localhost
     ports:
       - 6379:6379
-    # start Redis with data persistence
+    # startr redis with data persistence
     command: ["redis-server", "--appendonly", "yes"]
+    restart: always
     volumes:
       # persist redis data
       - redis-data:/data
       
   celery-worker:
     image: edrn/labcas-celery
-    #container_name: celery-worker
-    environment:
-      - CELERY_BROKER_URL=redis://redis:6379/0
-      - CELERY_BACKEND_URL=redis://redis:6379/0
     build:
       context: .
     command: ["celery", "-A",  "labcas.celery.worker", "worker", "-l", "info"]
+    env_file:
+      - labcas-celery.env
+    restart: always
+    depends_on:
+      - redis
     
   flower:
     image: edrn/labcas-celery
     container_name: flower
     ports:
       - 5555:5555
-    environment:
-      - CELERY_BROKER_URL=redis://redis:6379/0
-      - CELERY_BACKEND_URL=redis://redis:6379/0
+    restart: always
     command: ["celery", "-A",  "labcas.celery.worker", "flower", "-l", "info"]
-    
-  celery-client:
-    image: edrn/labcas-celery
-    container_name: celery-client
-    command: ["tail", "-f", "/dev/null"]
-  
+    env_file:
+      - labcas-celery.env
+    depends_on:
+      - redis
+      - celery-worker
+      
 volumes:
   redis-data:
