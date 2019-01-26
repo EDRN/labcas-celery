@@ -10,7 +10,8 @@ services:
     image: edrn/labcas-celery-tensorflow
     build:
       context: .
-      
+    volumes:
+      - tensorflow_data:/tmp/tensorflow/mnist/input_data
       
   # init container download the tensorflow data to a shared volume
   data-download:

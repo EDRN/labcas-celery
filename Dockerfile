@@ -8,6 +8,9 @@ RUN apt-get update
 # create non-privileged user
 RUN groupadd -g 999 celery && \
     useradd -r -u 999 -g celery celery
+    
+# FIXME
+RUN pip install tensorflow
 
 # install LabCAS-celery source code
 COPY ./src /usr/local/src
