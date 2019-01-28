@@ -4,7 +4,7 @@ Celery worker app configured with LabCAS tasks.
 from celery import Celery
 import os
 import pkgutil
-import labcas.workflows.tasks
+import labcas.celery.tasks
 
 
 # utility functions to list all modules of a given package, recursively
@@ -25,8 +25,8 @@ def _list_modules(package, modules):
 broker_url = os.environ.get("CELERY_BROKER_URL", "redis://localhost:6379/0")
 backend_url = os.environ.get("CELERY_BACKEND_URL", "redis://localhost:6379/0")
 
-task_modules = list_modules(labcas.workflows.tasks)
-app = Celery('labcas.workflows',
+task_modules = list_modules(labcas.celery.tasks)
+app = Celery('labcas.celery',
              broker=broker_url,
              backend=backend_url,
              include=task_modules)
