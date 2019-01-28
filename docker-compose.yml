@@ -51,6 +51,7 @@ services:
       
   nginx:
      image: nginx
+     container_name: nginx
      # makes flower available at: http://<hostname>:<port>/flower/
      ports:
         - "80:80"
