@@ -15,7 +15,7 @@ services:
     # expose port to client running on localhost
     ports:
       - 6379:6379
-    # startr redis with data persistence
+    # start redis with data persistence
     command: ["redis-server", "--appendonly", "yes"]
     restart: always
     volumes:
