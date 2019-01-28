@@ -2,7 +2,7 @@
 Module containing LabCAS Celery tasks.
 '''
 
-from labcas.celery.worker import app
+from labcas.workflows.worker import app
 import subprocess
 import io
 
