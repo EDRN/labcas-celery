@@ -26,6 +26,7 @@ broker_url = os.environ.get("CELERY_BROKER_URL", "redis://localhost:6379/0")
 backend_url = os.environ.get("CELERY_BACKEND_URL", "redis://localhost:6379/0")
 
 task_modules = list_modules(labcas.celery.tasks)
+print("Including task modules: %s" % task_modules)
 app = Celery('labcas.celery',
              broker=broker_url,
              backend=backend_url,

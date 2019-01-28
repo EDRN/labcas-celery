@@ -30,7 +30,7 @@ import tensorflow as tf
 from labcas.celery.worker import app
 
 @app.task
-def main(num_images=1000, data_dir='/tmp/tensorflow/mnist/input_data', output_file='output.txt'):
+def tensorflow_task(num_images=1000, data_dir='/tmp/tensorflow/mnist/input_data', output_file='output.txt'):
 
   # Import data
   mnist = input_data.read_data_sets(data_dir, one_hot=True)
@@ -72,3 +72,5 @@ def main(num_images=1000, data_dir='/tmp/tensorflow/mnist/input_data', output_fi
   # Write result to file
   with open(output_file, "w") as file: 
     file.write(str(result))
+    
+  return str(result)

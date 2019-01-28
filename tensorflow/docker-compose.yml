@@ -15,6 +15,10 @@ services:
     volumes:
       - tensorflow_data:/tmp/tensorflow/mnist/input_data
       
+  # override flower container to use the image that includes the Tensorflow tasks
+  flower:
+    image: edrn/labcas-celery-tensorflow
+      
   # init container downloads the tensorflow data to a shared volume
   data-download:
     image: busybox
