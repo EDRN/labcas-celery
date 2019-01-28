@@ -24,6 +24,7 @@ services:
       
   celery-worker:
     image: edrn/labcas-celery
+    user: noroot
     build:
       context: .
     command: ["celery", "-A",  "labcas.celery.worker", "worker", "-l=info"]
@@ -36,6 +37,7 @@ services:
   flower:
     image: edrn/labcas-celery
     container_name: flower
+    user: noroot
     ports:
       - 5555:5555
     restart: always

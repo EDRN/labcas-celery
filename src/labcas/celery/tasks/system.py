@@ -6,12 +6,13 @@ from labcas.celery.worker import app
 import subprocess
 import io
 
+
 def exec_subprocess(command):
     '''
     Executes a generic system command as a subprocess.
     The command must be supplied as a list of strings.
     '''
-    
+
     print("Executing command: %s" % " ".join(command))
     proc = subprocess.Popen(command,
                             stdout=subprocess.PIPE,
@@ -26,7 +27,7 @@ def exec_subprocess(command):
 
     print("Command exited with code: %s" % proc.returncode)
     return proc.returncode
-    
+
 
 @app.task
 def exec_command(command):
@@ -34,9 +35,9 @@ def exec_command(command):
     Task to execute a generic system command.
     Command is passed as a single string.
     '''
-    
+
     return exec_subprocess(command.split(" "))
-    
+
 
 @app.task
 def exec_script(script_path, *argv, **kwargs):
@@ -46,5 +47,5 @@ def exec_script(script_path, *argv, **kwargs):
 
     command = [script_path] + list(argv) + [
         "%s=%s" % (k, v) for k, v in kwargs.items()]
-    
+
     return exec_subprocess(command)
