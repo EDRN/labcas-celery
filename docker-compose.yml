@@ -24,6 +24,7 @@ services:
       
   celery-worker:
     image: edrn/labcas-celery
+    container_name: celery-worker
     user: noroot
     build:
       context: .

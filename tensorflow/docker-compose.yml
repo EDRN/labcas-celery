@@ -6,24 +6,25 @@ version: '3.3'
 
 services:
 
+  # LabCAS Celery worker with Tensorflow package
   celery-worker:
     image: edrn/labcas-celery-tensorflow
     build:
+      # context path is relative to location of this docker-compose file
       context: .
     volumes:
       - tensorflow_data:/tmp/tensorflow/mnist/input_data
       
-  # init container download the tensorflow data to a shared volume
+  # init container downloads the tensorflow data to a shared volume
   data-download:
     image: busybox
     container_name: data-download
     entrypoint: /usr/local/bin/data_download.sh
-    #command: ["tail", "-f", "/dev/null"]
     environment: 
-      - TENSORFLOW_DATA=/tmp/MNIST_data
+      - TENSORFLOW_DATA=/data
     volumes:
       - ./tensorflow/data_download.sh:/usr/local/bin/data_download.sh
-      - tensorflow_data:/tmp/MNIST_data
+      - tensorflow_data:/data
       
 volumes:
   tensorflow_data:

@@ -1,8 +1,7 @@
-# LabCAS Celery worker equipped with Tensorflow
+# LabCAS Celery worker equipped with Tensorflow package
 FROM edrn/labcas-celery
 
-# install tensorflow in system Python
-USER root
 RUN apt-get update
+
+# install tensorflow in system Python
 RUN pip install tensorflow
-USER celery
