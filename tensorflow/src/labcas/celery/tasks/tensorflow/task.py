@@ -74,3 +74,25 @@ def tensorflow_task(num_images=1000, data_dir='/tmp/tensorflow/mnist/input_data'
     file.write(str(result))
     
   return str(result)
+  
+  # command line invocation program
+if __name__ == '__main__':
+
+    '''
+    # parse command line arguments
+    parser = argparse.ArgumentParser(description="Tensorflow demo program")
+    parser.add_argument('--num_images', type=int, help="Number of images", default=1000)
+    parser.add_argument('--data_dir', type=str, help="Input data directory", default='/tmp/tensorflow/mnist/input_data')
+    parser.add_argument('--output_file', type=str, help="Output file path", default='output.txt')
+    
+    args_dict = vars(parser.parse_args())
+
+    tensorflow_task.delay(num_images=args_dict['num_images'],
+                          data_dir=args_dict['data_dir'],
+                          output_file=args_dict['output_file'])
+    '''
+    
+    # submit N tasks asynchronously
+    from labcas.celery.tasks.tensorflow.task import tensorflow_task
+    for i in range(10):
+        tensorflow_task.delay(num_images=100, output_file="/tmp/output_%s.txt" % i)

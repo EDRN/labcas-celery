@@ -13,8 +13,8 @@ services:
     image: redis
     container_name: redis
     # expose port to client running on localhost
-    ports:
-      - 6379:6379
+    #ports:
+    #  - 6379:6379
     # start redis with data persistence
     command: ["redis-server", "--appendonly", "yes"]
     restart: always
@@ -39,10 +39,10 @@ services:
     image: edrn/labcas-celery
     container_name: flower
     user: noroot
-    ports:
-      - 5555:5555
+    #ports:
+    #  - 5555:5555
     restart: always
-    command: ["celery", "-A",  "labcas.celery.worker", "flower", "-l", "info", "--url_prefix=flower"]
+    command: ["celery", "-A",  "labcas.celery.worker", "flower", "-l", "info", "--url_prefix=flower", "-c", "10"]
     env_file:
       - labcas-celery.env
     depends_on:
@@ -54,13 +54,12 @@ services:
      container_name: nginx
      # makes flower available at: http://<hostname>:<port>/flower/
      ports:
-        - "80:80"
+        - "5555:80"
      volumes:
         # override default nginx configuration
         - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
      depends_on:
        - flower 
-
 
 volumes:
   redis-data:

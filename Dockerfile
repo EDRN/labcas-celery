@@ -7,19 +7,16 @@ RUN apt-get update
 
 # create non-privileged user to run Celery workers
 RUN groupadd -g 999 noroot && \
-    useradd -r -u 999 -g noroot noroot
+    useradd -r -u 999 -g noroot -d /home/noroot noroot
     
-# FIXME
-# RUN pip install tensorflow
-
+# install Celery and Flower
+RUN pip install --upgrade pip &&\
+    pip install --no-cache-dir celery[redis] flower
+    
 # install LabCAS-celery source code
 COPY ./src /usr/local/src
 ENV PYTHONPATH /usr/local/src
 
-# install Celery and Flower
-RUN pip install --upgrade pip &&\
-    pip install --no-cache-dir -r /usr/local/src/requirements.txt
-    
 # expose Flower port
 EXPOSE 5555
     

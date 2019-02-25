@@ -33,9 +33,9 @@ app = Celery('labcas.celery',
              include=task_modules)
 
 # optional configuration
-app.conf.update(
-    result_expires=3600,
-)
+#app.conf.update(
+#    result_expires=3600,
+#)
 
 if __name__ == '__main__':
     app.start()

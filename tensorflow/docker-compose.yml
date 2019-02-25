@@ -12,6 +12,8 @@ services:
     build:
       # context path is relative to location of this docker-compose file
       context: .
+    depends_on:
+      - data-download
     volumes:
       - tensorflow_data:/tmp/tensorflow/mnist/input_data
       
@@ -23,7 +25,8 @@ services:
   data-download:
     image: busybox
     container_name: data-download
-    entrypoint: /usr/local/bin/data_download.sh
+    #entrypoint: /usr/local/bin/data_download.sh
+    command: ["tail", "-f", "/dev/null"]
     environment: 
       - TENSORFLOW_DATA=/data
     volumes:

@@ -2,6 +2,9 @@
 # Script to download the initial Tensorflow data 
 # to the directory $TENSORFLOW_DATA
 #
+
+set -ex
+
 if [ ! "$TENSORFLOW_DATA" ]; then
     echo "TENSORFLOW_DATA is NOT set"
     exit
@@ -11,7 +14,16 @@ fi
 
 mkdir -p $TENSORFLOW_DATA
 cd $TENSORFLOW_DATA
-wget "http://yann.lecun.com/exdb/mnist/t10k-labels-idx1-ubyte.gz"
-wget "http://yann.lecun.com/exdb/mnist/t10k-images-idx3-ubyte.gz"
-wget "http://yann.lecun.com/exdb/mnist/train-labels-idx1-ubyte.gz"
-wget "http://yann.lecun.com/exdb/mnist/train-images-idx3-ubyte.gz"
+
+for file in "t10k-labels-idx1-ubyte.gz" "t10k-images-idx3-ubyte.gz" "train-labels-idx1-ubyte.gz" "train-images-idx3-ubyte.gz"
+do
+	if [ ! -f ${file} ]; then
+		echo "Downlaoding ${file}"
+		wget "http://yann.lecun.com/exdb/mnist/${file}"
+fi
+done
+
+#wget "http://yann.lecun.com/exdb/mnist/t10k-labels-idx1-ubyte.gz"
+#wget "http://yann.lecun.com/exdb/mnist/t10k-images-idx3-ubyte.gz"
+#wget "http://yann.lecun.com/exdb/mnist/train-labels-idx1-ubyte.gz"
+#wget "http://yann.lecun.com/exdb/mnist/train-images-idx3-ubyte.gz"
