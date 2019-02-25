@@ -1,0 +1,65 @@
+# Manifets file for Redis application
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+  labels:
+    stack: labcas
+    app: redis
+spec:
+  ports:
+    - port: 6379
+  selector:
+    stack: labcas
+    app: redis
+  clusterIP: None
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: redis-pv-claim
+  labels:
+    stack: labcas
+    app: redis
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+  labels:
+    stack: labcas
+    app: redis
+spec:
+  selector:
+    matchLabels:
+      stack: labcas
+      app: redis
+  template:
+    metadata:
+      labels:
+        stack: labcas
+        app: redis
+    spec:
+      containers:
+      - image: redis
+        name: redis
+        command: ["redis-server"]
+        args: ["--appendonly", "yes"]
+        ports: 
+        - containerPort: 6379
+          name: redis
+        volumeMounts:
+        - name: redis-persistent-storage
+          mountPath: /data
+      restartPolicy: Always
+      volumes:
+      - name: redis-persistent-storage
+        persistentVolumeClaim:
+          claimName: redis-pv-claim

@@ -1,0 +1,85 @@
+# Manifets file for Flower application
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx
+  labels:
+    stack: labcas
+    app: nginx
+spec:
+  ports:
+    - port: 5555
+  selector:
+    stack: labcas
+    app: nginx
+  type: LoadBalancer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+  labels:
+    stack: labcas
+    app: nginx
+spec:
+  selector:
+    matchLabels:
+      stack: labcas
+      app: nginx
+  template:
+    metadata:
+      labels:
+        stack: labcas
+        app: nginx
+    spec:
+      containers:
+      - image: nginx
+        name: nginx
+        ports: 
+        - containerPort: 80
+          name: nginx
+        volumeMounts:
+        - name: "nginx-config"
+          mountPath: "/tmp"
+        volumeMounts:
+          - mountPath: /etc/nginx/conf.d
+            name: nginx-config
+      restartPolicy: Always
+      volumes:
+        - name: "nginx-config"
+          configMap:
+            name: "nginx-config"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flower
+  labels:
+    stack: labcas
+    app: flower
+spec:
+  selector:
+    matchLabels:
+      stack: labcas
+      app: flower
+  template:
+    metadata:
+      labels:
+        stack: labcas
+        app: flower
+    spec:
+      containers:
+      - image: edrn/labcas-celery
+        name: flower
+        command: ["celery"]
+        args: ["-A",  "labcas.celery.worker", "flower", "-l", "info", "--url_prefix=flower", "-c", "10"]
+        env:
+          - name: CELERY_BROKER_URL
+            value: redis://redis:6379/0
+          - name: CELERY_BACKEND_URL
+            value: redis://redis:6379/0
+        ports: 
+        - containerPort: 5555
+          name: flower
+      restartPolicy: Always
