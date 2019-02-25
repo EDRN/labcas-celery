@@ -1,4 +1,4 @@
-# Manifets file for Redis application
+# Manfest file for Redis application
 
 apiVersion: v1
 kind: Service

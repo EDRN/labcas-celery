@@ -1,0 +1,50 @@
+# Manifets file for Nginx application
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx
+  labels:
+    stack: labcas
+    app: nginx
+spec:
+  ports:
+    - port: 80
+  selector:
+    stack: labcas
+    app: nginx
+  type: LoadBalancer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+  labels:
+    stack: labcas
+    app: nginx
+spec:
+  selector:
+    matchLabels:
+      stack: labcas
+      app: nginx
+  template:
+    metadata:
+      labels:
+        stack: labcas
+        app: nginx
+    spec:
+      containers:
+      - image: nginx
+        name: nginx
+        ports: 
+          - containerPort: 80
+            name: nginx
+        volumeMounts: 
+          - name: nginx-config
+            mountPath: /etc/nginx/conf.d/default.conf
+            subPath: default.conf
+      restartPolicy: Always
+      volumes:
+        - name: nginx-config
+          configMap:
+            name: nginx-config

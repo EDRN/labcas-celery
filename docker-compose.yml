@@ -28,7 +28,7 @@ services:
     user: noroot
     build:
       context: .
-    command: ["celery", "-A",  "labcas.celery.worker", "worker", "-l=info"]
+    command: ["celery", "-A",  "labcas.celery.worker", "worker", "-l=info", "-c", "10"]
     env_file:
       - labcas-celery.env
     restart: always
@@ -42,7 +42,7 @@ services:
     #ports:
     #  - 5555:5555
     restart: always
-    command: ["celery", "-A",  "labcas.celery.worker", "flower", "-l", "info", "--url_prefix=flower", "-c", "10"]
+    command: ["celery", "-A",  "labcas.celery.worker", "flower", "-l", "info", "--url_prefix=flower"]
     env_file:
       - labcas-celery.env
     depends_on:
@@ -57,7 +57,7 @@ services:
         - "5555:80"
      volumes:
         # override default nginx configuration
-        - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+        - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
      depends_on:
        - flower 
 

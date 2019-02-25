@@ -1,20 +1,5 @@
-# Manfest file for Flower application
+# Celery Tensorflow worker
 
-apiVersion: v1
-kind: Service
-metadata:
-  name: flower
-  labels:
-    stack: labcas
-    app: flower
-spec:
-  ports:
-    - port: 5555
-  selector:
-    stack: labcas
-    app: flower
-  clusterIP: None
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -37,7 +22,7 @@ spec:
       - image: edrn/labcas-celery
         name: flower
         command: ["celery"]
-        args: ["-A",  "labcas.celery.worker", "flower", "-l", "info", "--url_prefix=flower"]
+        args: ["-A",  "labcas.celery.worker", "flower", "-l", "info", "--url_prefix=flower", "-c", "10"]
         env:
           - name: CELERY_BROKER_URL
             value: redis://redis:6379/0
