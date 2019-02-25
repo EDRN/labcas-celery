@@ -1,34 +1,31 @@
-# Celery Tensorflow worker
+# Manifest file for base Celery worker application
 
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: flower
+  name: worker
   labels:
     stack: labcas
-    app: flower
+    app: worker
 spec:
   selector:
     matchLabels:
       stack: labcas
-      app: flower
+      app: worker
   template:
     metadata:
       labels:
         stack: labcas
-        app: flower
+        app: worker
     spec:
       containers:
       - image: edrn/labcas-celery
-        name: flower
+        name: worker
         command: ["celery"]
-        args: ["-A",  "labcas.celery.worker", "flower", "-l", "info", "--url_prefix=flower", "-c", "10"]
+        args: ["-A",  "labcas.celery.worker", "worker", "-l=info", "-c", "10"]
         env:
           - name: CELERY_BROKER_URL
             value: redis://redis:6379/0
           - name: CELERY_BACKEND_URL
             value: redis://redis:6379/0
-        ports: 
-        - containerPort: 5555
-          name: flower
       restartPolicy: Always

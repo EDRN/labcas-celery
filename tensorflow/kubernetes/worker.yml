@@ -1,0 +1,64 @@
+# Manifest file for running the Tensorflow Celery worker application
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: worker
+  labels:
+    stack: labcas
+    app: worker
+spec:
+  selector:
+    matchLabels:
+      stack: labcas
+      app: worker
+  template:
+    metadata:
+      labels:
+        stack: labcas
+        app: worker
+    spec:
+    
+      # shared volume between the two containers
+      volumes:
+        - name: tensorflow-data
+          emptyDir: {}
+          
+      containers:
+      - image: edrn/labcas-celery-tensorflow
+        name: worker
+        command: ["celery"]
+        args: ["-A",  "labcas.celery.worker", "worker", "-l=info", "-c", "1"]
+        env:
+          - name: CELERY_BROKER_URL
+            value: redis://redis:6379/0
+          - name: CELERY_BACKEND_URL
+            value: redis://redis:6379/0
+        volumeMounts:
+          - name: tensorflow-data
+            mountPath: /tmp/tensorflow/mnist/input_data
+     
+      initContainers:
+       - name: data-downlod
+         image: busybox
+         command: ["/bin/sh", "-c"]
+         args:
+         - cd $TENSORFLOW_DATA;
+           echo 'Starting data download';
+           wget http://yann.lecun.com/exdb/mnist/t10k-labels-idx1-ubyte.gz;
+           gunzip t10k-labels-idx1-ubyte.gz;
+           wget http://yann.lecun.com/exdb/mnist/t10k-images-idx3-ubyte.gz;
+           gunzip t10k-images-idx3-ubyte.gz;
+           wget http://yann.lecun.com/exdb/mnist/train-labels-idx1-ubyte.gz;
+           gunzip train-labels-idx1-ubyte.gz;
+           wget http://yann.lecun.com/exdb/mnist/train-images-idx3-ubyte.gz;
+           gunzip train-images-idx3-ubyte.gz;
+           echo 'Done downloading data';
+         env: 
+         - name: TENSORFLOW_DATA
+           value: /data
+         volumeMounts:
+         - name: tensorflow-data
+           mountPath: /data
+           
+      restartPolicy: Always

@@ -25,8 +25,8 @@ services:
   data-download:
     image: busybox
     container_name: data-download
-    #entrypoint: /usr/local/bin/data_download.sh
-    command: ["tail", "-f", "/dev/null"]
+    entrypoint: /usr/local/bin/data_download.sh
+    #command: ["tail", "-f", "/dev/null"]
     environment: 
       - TENSORFLOW_DATA=/data
     volumes:
