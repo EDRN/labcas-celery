@@ -1,55 +1,19 @@
-# Manifets file for Flower application
+# Manfest file for flower application
 
 apiVersion: v1
 kind: Service
 metadata:
-  name: nginx
+  name: flower
   labels:
     stack: labcas
-    app: nginx
+    app: flower
 spec:
   ports:
     - port: 5555
   selector:
     stack: labcas
-    app: nginx
-  type: LoadBalancer
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: nginx
-  labels:
-    stack: labcas
-    app: nginx
-spec:
-  selector:
-    matchLabels:
-      stack: labcas
-      app: nginx
-  template:
-    metadata:
-      labels:
-        stack: labcas
-        app: nginx
-    spec:
-      containers:
-      - image: nginx
-        name: nginx
-        ports: 
-        - containerPort: 80
-          name: nginx
-        volumeMounts:
-        - name: "nginx-config"
-          mountPath: "/tmp"
-        volumeMounts:
-          - mountPath: /etc/nginx/conf.d
-            name: nginx-config
-      restartPolicy: Always
-      volumes:
-        - name: "nginx-config"
-          configMap:
-            name: "nginx-config"
+    app: flower
+  clusterIP: None
 ---
 apiVersion: apps/v1
 kind: Deployment
