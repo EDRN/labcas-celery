@@ -28,6 +28,7 @@ spec:
       - image: edrn/labcas-celery-tensorflow
         name: worker
         command: ["celery"]
+        # Note: concurrency=1 because this tensorflow application cannot share the input data files
         args: ["-A",  "labcas.celery.worker", "worker", "-l=info", "-c", "1"]
         env:
           - name: CELERY_BROKER_URL
