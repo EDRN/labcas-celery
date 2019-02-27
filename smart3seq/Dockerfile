@@ -22,9 +22,17 @@ RUN cd /usr/local && \
 ENV PATH=$PATH:/usr/local/samtools_install/bin
     
 # download STAR binary
-RUN cd /usr/local/bin && \
-    wget -O STAR 'https://github.com/alexdobin/STAR/blob/master/bin/Linux_x86_64_static/STAR?raw=true' && \
-    chmod +x STAR
+#RUN cd /usr/local/bin && \
+#    wget -O STAR 'https://github.com/alexdobin/STAR/blob/master/bin/Linux_x86_64_static/STAR?raw=true' && \
+#    chmod +x STAR
+RUN apt-get install -y curl
+RUN cd /usr/local &&\
+    curl -OLk https://github.com/alexdobin/STAR/archive/2.6.1d.tar.gz &&\
+	gunzip 2.6.1d.tar.gz &&\
+    tar -xvf 2.6.1d.tar &&\
+	cd STAR-2.6.1d/source &&\
+	make STAR &&\
+	mv STAR /usr/local/bin/.
 ENV PATH=$PATH:/usr/local/bin
 
 # install Python 3
