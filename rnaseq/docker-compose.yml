@@ -1,0 +1,18 @@
+# docker-compose file that overrides the standard celery worker container
+# with the a container equipped with common RNA-Sequencing tools
+
+version: '3.3'
+
+services:
+
+  # LabCAS Celery worker with RNA-Sequencing tools
+  celery-worker:
+    image: edrn/labcas-celery-rnaseq
+    build:
+      # context path is relative to location of this docker-compose file
+      context: .
+      
+  # override flower container to use the image that includes the RNA-Sequencing tasks
+  flower:
+    image: edrn/labcas-celery-rnaseq
+      
