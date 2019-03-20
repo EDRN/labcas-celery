@@ -10,7 +10,9 @@ RUN apt-get update && \
     
 # create non-privileged user to run Celery workers
 RUN groupadd -g 999 noroot && \
-    useradd -r -u 999 -g noroot -d /home/noroot noroot
+    useradd -r -u 999 -g noroot -d /home/noroot noroot &&\
+    mkdir =p /home/noroot &&\
+    chown noroot:noroot /home/noroot
  
 # install bowtie2
 RUN cd /usr/local && \
@@ -50,6 +52,11 @@ ENV PATH ${CONDA_HOME}/bin:${PATH}
 RUN curl -O https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh\
 	&& bash Miniconda3-latest-Linux-x86_64.sh -b -p ${CONDA_HOME} &&\
 	conda install python=3.6
+	
+# install a Python 2.7 virtual environment to run tophat
+RUN conda create -n py27 python=2.7
+# conda activate py27
+# conda deactivate
 
 # install Celery and Flower
 RUN pip install --no-cache-dir celery[redis] flower
@@ -65,5 +72,7 @@ ENV PYTHONPATH /usr/local/src
 # install RNA-Seq tasks within LabCAS package
 COPY src/labcas/celery/tasks/rnaseq/ /usr/local/src/labcas/celery/tasks/rnaseq/
 
-WORKDIR /usr/local/src
-	
+# install program scripts
+COPY scripts /usr/local/bin
+
+WORKDIR /usr/local/src	
