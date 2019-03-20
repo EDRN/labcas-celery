@@ -61,4 +61,9 @@ RUN pip install numpy matplotlib\
 # install labcas celery package
 COPY --from=labcas-celery /usr/local/src/labcas /usr/local/src/labcas 
 ENV PYTHONPATH /usr/local/src
+
+# install RNA-Seq tasks within LabCAS package
+COPY src/labcas/celery/tasks/rnaseq/ /usr/local/src/labcas/celery/tasks/rnaseq/
+
+WORKDIR /usr/local/src
 	

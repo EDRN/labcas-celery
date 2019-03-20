@@ -49,3 +49,12 @@ def exec_script(script_path, *argv, **kwargs):
         "%s=%s" % (k, v) for k, v in kwargs.items()]
 
     return exec_subprocess(command)
+
+
+@app.task
+def echo(message):
+    '''
+    Task that prints a message to standard output.
+    '''
+
+    print(message)
