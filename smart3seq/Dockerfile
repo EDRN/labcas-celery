@@ -5,7 +5,7 @@ FROM ubuntu:18.04
 RUN apt-get update
 
 RUN apt-get update && \
-    apt-get install -y wget unzip tar bzip2 make gcc libz-dev g++ vim curl git
+    apt-get install -y wget unzip tar bzip2 make gcc libz-dev g++ vim curl git pigz pypy parallel
 
 # install samtools
 ENV SAMTOOLS_VERSION=1.5
@@ -45,11 +45,20 @@ ENV PATH=${CONDA_HOME}/bin:$PATH
 RUN cd /usr/local &&\
     git clone https://github.com/jwfoley/3SEQtools.git
     
-# install UMI-dedeup
-RUN cd /usr/local &&\
+# install UMI-dedeup (expected to be located under $HOME)
+RUN cd $HOME &&\
     git clone https://github.com/jwfoley/umi-dedup.git
     
 # install dependencies
 RUN pip install numpy numba pysam
 
+# Install Rscript
+RUN apt-get install -y r-base
+
 ENV PYTHONPATH=/usr/local/umi-dedup
+
+#install.packages("WriteXLS")
+
+#source("https://bioconductor.org/biocLite.R")
+#biocLite("Rsubread")
+#biocLite("rtracklayer")
