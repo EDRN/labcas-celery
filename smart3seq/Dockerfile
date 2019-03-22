@@ -5,7 +5,7 @@ FROM ubuntu:18.04
 RUN apt-get update
 
 RUN apt-get update && \
-    apt-get install -y wget unzip tar bzip2 make gcc libz-dev g++ vim
+    apt-get install -y wget unzip tar bzip2 make gcc libz-dev g++ vim curl git
 
 # install samtools
 ENV SAMTOOLS_VERSION=1.5
@@ -25,7 +25,6 @@ ENV PATH=$PATH:/usr/local/samtools_install/bin
 #RUN cd /usr/local/bin && \
 #    wget -O STAR 'https://github.com/alexdobin/STAR/blob/master/bin/Linux_x86_64_static/STAR?raw=true' && \
 #    chmod +x STAR
-RUN apt-get install -y curl
 RUN cd /usr/local &&\
     curl -OLk https://github.com/alexdobin/STAR/archive/2.6.1d.tar.gz &&\
 	gunzip 2.6.1d.tar.gz &&\
@@ -43,7 +42,6 @@ RUN cd /usr/local && \
 ENV PATH=${CONDA_HOME}/bin:$PATH
     
 # install 3SEQtools
-RUN apt-get install -y git
 RUN cd /usr/local &&\
     git clone https://github.com/jwfoley/3SEQtools.git
     
