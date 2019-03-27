@@ -21,5 +21,6 @@ services:
   # override flower container to use the image that includes the RNA-Sequencing tasks
   flower:
     image: edrn/labcas-celery-smart3seq
+
     
       
