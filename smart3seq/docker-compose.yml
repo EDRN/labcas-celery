@@ -9,6 +9,7 @@ services:
   celery-worker:
     image: edrn/labcas-celery-smart3seq
     command: ["celery", "-A",  "labcas.celery.worker", "worker", "--loglevel=info", "-Q", "smart3seq", "-n", "smart3seq-worker", "-c", "1"]
+    user: root
     build:
       # context path is relative to location of this docker-compose file
       context: .
