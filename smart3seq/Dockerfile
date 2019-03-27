@@ -45,6 +45,7 @@ RUN cd /usr/local && \
 # install 3SEQtools
 RUN cd /usr/local &&\
     git clone https://github.com/jwfoley/3SEQtools.git
+ENV PATH=$PATH:/usr/local/3SEQtools
     
 # install UMI-dedeup (expected to be located under $HOME)
 RUN cd $HOME &&\
@@ -86,4 +87,3 @@ RUN groupadd -g 999 noroot && \
     useradd -r -u 999 -g noroot -d /home/noroot noroot
 RUN mkdir -p /home/noroot && chown noroot:noroot /home/noroot
 WORKDIR /home/noroot	
-
