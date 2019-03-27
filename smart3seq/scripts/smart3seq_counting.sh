@@ -2,7 +2,10 @@
 # Script to execute Smart3seq read counting
 set -e
 
-echo "Executing Smart3seq read counting"
-cd /usr/local/3SEQtools
-Rscript make_expression_table.R --no-rlog /data/smart3seq/genome/hg38/gencode.v25.annotation.gtf /data/smart3seq/data/tophat_out/*bam
+run=$1
+echo "Executing Smart3seq read counting for run: $run"
+
+cd ${SMART3SEQ_DATA_DIR}/data/${run}
+Rscript /usr/local/3SEQtools/make_expression_table.R --no-rlog ${SMART3SEQ_DATA_DIR}/genome/hg38/gencode.v25.annotation.gtf ${SMART3SEQ_DATA_DIR}/data/${run}/*bam
+
 
