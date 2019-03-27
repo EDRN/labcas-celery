@@ -1,0 +1,25 @@
+# docker-compose file to run the Smart3seq data processing pipeline
+# env variable SMART3SEQ_DATA_DIR must reference directory with required genome data
+
+version: '3.3'
+
+services:
+
+  # LabCAS Celery worker with Smart3seq tools
+  celery-worker:
+    image: edrn/labcas-celery-smart3seq
+    command: ["celery", "-A",  "labcas.celery.worker", "worker", "--loglevel=info", "-Q", "smart3seq", "-n", "smart3seq-worker", "-c", "1"]
+    build:
+      # context path is relative to location of this docker-compose file
+      context: .
+    environment:
+      SMART3SEQ_DATA_DIR: /data/smart3seq
+    volumes:
+      # note: the host directory ${HOME}/data/smart3seq/ must exist and be writable by anybody
+      - ${SMART3SEQ_DATA_DIR}/:/data/smart3seq/
+      
+  # override flower container to use the image that includes the RNA-Sequencing tasks
+  flower:
+    image: edrn/labcas-celery-smart3seq
+    
+      

@@ -36,7 +36,7 @@ def rnaseq_workflow(metadata={}):
     return async_result
     
 
-  # command line invocation program
+# command line invocation program
 if __name__ == '__main__':
     
     # submit N tasks asynchronously
