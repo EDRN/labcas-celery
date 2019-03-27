@@ -16,14 +16,14 @@ WORKFLOW = "smart3seq"
 
 
 
-def smart3seq_workflow(metadata={}):
+def smart3seq_workflow(run):
     
     print("Executing Smart3seq workflow")
     
-    s3 = exec_script.signature((SCRIPT_SMART3SEQ_ALIGNMENT,),
+    s3 = exec_script.signature((SCRIPT_SMART3SEQ_ALIGNMENT, run,),
                         queue=WORKFLOW, routing_key=WORKFLOW,
                         immutable=True)
-    s4 = exec_script.signature((SCRIPT_SMART3SEQ_COUNTING,),
+    s4 = exec_script.signature((SCRIPT_SMART3SEQ_COUNTING, run,),
                         queue=WORKFLOW, routing_key=WORKFLOW,
                         immutable=True)
     
@@ -38,5 +38,7 @@ if __name__ == '__main__':
     # submit N tasks asynchronously
     from labcas.celery.tasks.smart3seq.smart3seq_tasks import smart3seq_workflow
     
-    smart3seq_workflow()
+    # FIXME: test run
+    run = "11553"
+    smart3seq_workflow(run)
     
