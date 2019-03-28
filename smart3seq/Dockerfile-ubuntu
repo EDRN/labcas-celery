@@ -1,20 +1,13 @@
 # Docker image containing Smart3seq pipelines
 FROM edrn/labcas-celery as labcas-celery
 
-FROM centos:6
+FROM ubuntu:18.04
 
-RUN yum update -y &&\
-    yum install -y wget unzip tar bzip2 make gcc libz-dev g++ vim curl git pigz pypy parallel
+RUN apt-get update && \
+    apt-get install -y \
+    wget unzip tar bzip2 make gcc libz-dev g++ vim curl git pigz pypy parallel \
+    libncurses5-dev libncursesw5-dev libbz2-dev libssl-dev liblzma-dev
 
-RUN yum install -y ncurses-devel bzip2-libs openssl-devel xz xz-devel 
-RUN yum install -y bzip2-devel 
-
-# install bcl2fastq from Illumina
-RUN cd /tmp &&\
-    curl -O https://support.illumina.com/content/dam/illumina-support/documents/downloads/software/bcl2fastq/bcl2fastq2-v2-20-0-linux-x86-64.zip &&\
-    unzip bcl2fastq2-v2-20-0-linux-x86-64.zip &&\
-    yum install -y bcl2fastq2-v2.20.0.422-Linux-x86_64.rpm
-    
 # install samtools
 ENV SAMTOOLS_VERSION=1.5
 RUN cd /usr/local && \
@@ -26,20 +19,18 @@ RUN cd /usr/local && \
     make prefix=/usr/local/samtools_install install && \
     rm "/usr/local/samtools-${SAMTOOLS_VERSION}.tar.bz2"
 ENV PATH=$PATH:/usr/local/samtools_install/bin
-
-#RUN yum install -y gcc g++
-
+    
 # download STAR binary
-RUN cd /usr/local/bin && \
-    wget -O STAR 'https://github.com/alexdobin/STAR/blob/master/bin/Linux_x86_64_static/STAR?raw=true' && \
-    chmod +x STAR
-#RUN cd /usr/local &&\
-#    curl -OLk https://github.com/alexdobin/STAR/archive/2.6.1d.tar.gz &&\
-#	gunzip 2.6.1d.tar.gz &&\
-#    tar -xvf 2.6.1d.tar &&\
-#	cd STAR-2.6.1d/source &&\
-#	make STAR &&\
-#	mv STAR /usr/local/bin/.
+#RUN cd /usr/local/bin && \
+#    wget -O STAR 'https://github.com/alexdobin/STAR/blob/master/bin/Linux_x86_64_static/STAR?raw=true' && \
+#    chmod +x STAR
+RUN cd /usr/local &&\
+    curl -OLk https://github.com/alexdobin/STAR/archive/2.6.1d.tar.gz &&\
+	gunzip 2.6.1d.tar.gz &&\
+    tar -xvf 2.6.1d.tar &&\
+	cd STAR-2.6.1d/source &&\
+	make STAR &&\
+	mv STAR /usr/local/bin/.
 ENV PATH=$PATH:/usr/local/bin
 
 # install Miniconda3
@@ -50,7 +41,7 @@ RUN cd /usr/local && \
     wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda.sh && \
     bash ~/miniconda.sh -b -p ${CONDA_HOME} &&\
     conda install python=3.6
-    
+
 # install 3SEQtools
 RUN cd /usr/local &&\
     git clone https://github.com/jwfoley/3SEQtools.git
@@ -60,17 +51,18 @@ ENV PATH=$PATH:/usr/local/3SEQtools
 RUN cd $HOME &&\
     git clone https://github.com/jwfoley/umi-dedup.git
 ENV PYTHONPATH=$HOME/umi-dedup
-
+    
 # install dependencies
 RUN pip install numpy numba pysam
 
-# install R
-RUN yum install -y epel-release
-RUN yum install -y R
+# Install R
+ENV DEBIAN_FRONTEND noninteractive
+RUN apt-get update &&\
+    apt-get install -y r-base
 
-RUN yum groupinstall -y "Development Tools"
-RUN yum install -y libxml2-devel
-
+# install R packages including BioConductors
+RUN apt-get update &&\
+    apt-get install -y libcurl4-openssl-dev libxml2-dev
 RUN sh -c "R -e \"install.packages('devtools', repos='http://cran.rstudio.com/')\""
 RUN sh -c "R -e \"install.packages('WriteXLS', repos='http://cran.rstudio.com/')\""
 RUN sh -c "R -e \"source('http://bioconductor.org/biocLite.R'); biocLite('BiocParallel')\""
