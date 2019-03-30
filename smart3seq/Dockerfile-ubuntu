@@ -82,6 +82,16 @@ COPY src/labcas/celery/tasks/smart3seq/ /usr/local/src/labcas/celery/tasks/smart
 # install program scripts
 COPY scripts /usr/local/bin
 
+# install bcl2fastq software from Illumina
+# must use the 'alien' tool to install rpm packages onto debian/ubuntu
+RUN apt-get update &&\
+    apt-get install -y alien
+RUN cd /tmp &&\
+    curl -O 'https://support.illumina.com/content/dam/illumina-support/documents/downloads/software/bcl2fastq/bcl2fastq2-v2-20-0-linux-x86-64.zip'
+RUN cd /tmp &&\
+    unzip bcl2fastq2-v2-20-0-linux-x86-64.zip &&\
+    alien -i bcl2fastq2-v2.20.0.422-Linux-x86_64.rpm
+
 # create non-privileged user to run Celery workers
 RUN groupadd -g 999 noroot && \
     useradd -r -u 999 -g noroot -d /home/noroot noroot
