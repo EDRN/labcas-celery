@@ -56,7 +56,7 @@ services:
         context: ./nginx
      # makes flower available at: http://<hostname>:<port>/flower/
      ports:
-        - "5555:80"
+        - "8080:80"
      #volumes:
         # override default nginx configuration
      #   - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
@@ -64,4 +64,4 @@ services:
        - flower 
 
 volumes:
-  redis-data:
+  redis-data: 

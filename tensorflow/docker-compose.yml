@@ -15,7 +15,7 @@ services:
     depends_on:
       - data-download
     volumes:
-      - tensorflow_data:/tmp/tensorflow/mnist/input_data
+      - tensorflow-data:/tmp/tensorflow/mnist/input_data
       
   # override flower container to use the image that includes the Tensorflow tasks
   flower:
@@ -31,8 +31,8 @@ services:
       - TENSORFLOW_DATA=/data
     volumes:
       - ./tensorflow/data_download.sh:/usr/local/bin/data_download.sh
-      - tensorflow_data:/data
+      - tensorflow-data:/data
       
 volumes:
-  tensorflow_data:
+  tensorflow-data: 
  
