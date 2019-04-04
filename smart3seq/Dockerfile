@@ -1,4 +1,4 @@
-# Docker image containing Smart3seq pipelines
+# Docker image to run Smart3seq pipeline
 FROM edrn/labcas-celery as labcas-celery
 
 FROM ubuntu:18.04
@@ -21,6 +21,7 @@ RUN cd /usr/local && \
 ENV PATH=$PATH:/usr/local/samtools_install/bin
     
 # download STAR binary
+# Note: must use older version to be compatible with genome data
 #RUN cd /usr/local/bin && \
 #    wget -O STAR 'https://github.com/alexdobin/STAR/blob/master/bin/Linux_x86_64_static/STAR?raw=true' && \
 #    chmod +x STAR
@@ -69,6 +70,16 @@ RUN sh -c "R -e \"source('http://bioconductor.org/biocLite.R'); biocLite('BiocPa
 RUN sh -c "R -e \"source('http://bioconductor.org/biocLite.R'); biocLite('Rsubread')\""
 RUN sh -c "R -e \"source('http://bioconductor.org/biocLite.R'); biocLite('rtracklayer')\""
 
+# install bcl2fastq software from Illumina
+# must use the 'alien' tool to install rpm packages onto debian/ubuntu
+RUN apt-get update &&\
+    apt-get install -y alien
+RUN cd /tmp &&\
+    curl -O 'https://support.illumina.com/content/dam/illumina-support/documents/downloads/software/bcl2fastq/bcl2fastq2-v2-20-0-linux-x86-64.zip'
+RUN cd /tmp &&\
+    unzip bcl2fastq2-v2-20-0-linux-x86-64.zip &&\
+    alien -i bcl2fastq2-v2.20.0.422-Linux-x86_64.rpm
+
 # install Celery and Flower
 RUN pip install --no-cache-dir celery[redis] flower
 
@@ -81,16 +92,6 @@ COPY src/labcas/celery/tasks/smart3seq/ /usr/local/src/labcas/celery/tasks/smart
 
 # install program scripts
 COPY scripts /usr/local/bin
-
-# install bcl2fastq software from Illumina
-# must use the 'alien' tool to install rpm packages onto debian/ubuntu
-RUN apt-get update &&\
-    apt-get install -y alien
-RUN cd /tmp &&\
-    curl -O 'https://support.illumina.com/content/dam/illumina-support/documents/downloads/software/bcl2fastq/bcl2fastq2-v2-20-0-linux-x86-64.zip'
-RUN cd /tmp &&\
-    unzip bcl2fastq2-v2-20-0-linux-x86-64.zip &&\
-    alien -i bcl2fastq2-v2.20.0.422-Linux-x86_64.rpm
 
 # create non-privileged user to run Celery workers
 RUN groupadd -g 999 noroot && \
