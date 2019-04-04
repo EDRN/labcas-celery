@@ -12,4 +12,4 @@ cd ${SMART3SEQ_DATA_DIR}/output/${run}
 #align_smart-3seq.sh ${SMART3SEQ_DATA_DIR}/genome/hg38/star/dbsnp147_gencode25-68 ${SMART3SEQ_DATA_DIR}/data/11553/*fastq.gz
 # FIXME:
 cp -R ${SMART3SEQ_DATA_DIR}/genome .
-align_smart-3seq.sh ./hg38/star/dbsnp147_gencode25-68 ${SMART3SEQ_DATA_DIR}/data/11553/*fastq.gz
+align_smart-3seq.sh ${SMART3SEQ_DATA_DIR}/output/${run}/genome/hg38/star/dbsnp147_gencode25-68 ${SMART3SEQ_DATA_DIR}/data/11553/*fastq.gz
