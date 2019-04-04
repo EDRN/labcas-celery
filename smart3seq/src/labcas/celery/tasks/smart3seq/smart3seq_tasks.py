@@ -6,6 +6,7 @@ import sys
 from labcas.celery.worker import app
 from celery import chain
 from labcas.celery.tasks.system_tasks import echo, exec_script
+import time
 
 SCRIPT_DATA_DOWLOAD = "/usr/local/bin/run_data_download.sh"
 
@@ -43,4 +44,5 @@ if __name__ == '__main__':
     # submit N jobs
     for run in range(10):
         smart3seq_workflow(str(run))
+        time.sleep(5)
     
