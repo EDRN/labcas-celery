@@ -42,7 +42,7 @@ if __name__ == '__main__':
     # FIXME: test run
     # run = "11553"
     # submit N jobs
-    for run in range(1):
+    for run in range(10):
         smart3seq_workflow(str(run))
         time.sleep(5)
     
