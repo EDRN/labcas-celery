@@ -39,6 +39,7 @@ if __name__ == '__main__':
     from labcas.celery.tasks.smart3seq.smart3seq_tasks import smart3seq_workflow
     
     # FIXME: test run
-    run = "11553"
+    #run = "11553"
+    run = 1
     smart3seq_workflow(run)
     
