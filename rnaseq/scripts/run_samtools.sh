@@ -7,5 +7,5 @@ set -e
 run=$1
 echo "Executing Samtools for run: $run"
 
-cd $RNASEQ_DATA_DIR/$run/tophat_out
+cd $RNASEQ_DATA_DIR/output/$run/tophat_out
 samtools index accepted_hits.bam

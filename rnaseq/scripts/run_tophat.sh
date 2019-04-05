@@ -11,7 +11,7 @@ echo "Executing Tophat for run: $run"
 DATA_DIR=$RNASEQ_DATA_DIR/test_data
 
 # working directory
-RUN_DIR=$RNASEQ_DATA_DIR/$run
+RUN_DIR=$RNASEQ_DATA_DIR/output/$run
 mkdir -p $RUN_DIR
 cd $RUN_DIR
 
