@@ -1,5 +1,11 @@
 #!/bin/bash
 # Script to run Samtools to index bam files produced by Tophat
 
-cd $RNASEQ_DATA_DIR/test_data/tophat_out
+set -e
+
+# specific run to be processed
+run=$1
+echo "Executing Samtools for run: $run"
+
+cd $RNASEQ_DATA_DIR/$run/tophat_out
 samtools index accepted_hits.bam

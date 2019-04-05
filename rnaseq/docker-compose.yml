@@ -1,5 +1,6 @@
 # docker-compose file that overrides the standard celery worker container
 # with the a container equipped with common RNA-Sequencing tools
+# Requires env variable $RNASEQ_DATA_DIR pointing to a directory that exists, and is writable by everybody
 
 version: '3.3'
 
@@ -15,8 +16,8 @@ services:
     environment:
       RNASEQ_DATA_DIR: /data/rnaseq
     volumes:
-      # note: the host directory ${HOME}/data/rnaseq/ must exist and be writable by anybody
-      - ${HOME}/data/rnaseq/:/data/rnaseq/
+      # note: the host directory ${RNASEQ_DATA_DIR} must exist and be writable by anybody
+      - ${RNASEQ_DATA_DIR}:/data/rnaseq/
       
   # override flower container to use the image that includes the RNA-Sequencing tasks
   flower:

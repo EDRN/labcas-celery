@@ -14,20 +14,20 @@ SCRIPT_HTSEQ_COUNT = "/usr/local/bin/run_htseq_count.sh"
 
 WORKFLOW = "rnaseq"
 
-def rnaseq_workflow(metadata={}):
+def rnaseq_workflow(run):
     
     print("Executing RNASEQ workflow")
     
     s0 = exec_script.signature((SCRIPT_DATA_DOWLOAD,),
                         queue=WORKFLOW, routing_key=WORKFLOW,
                         immutable=True)
-    s1 = exec_script.signature((SCRIPT_TOPHAT,),
+    s1 = exec_script.signature((SCRIPT_TOPHAT, run),
                         queue=WORKFLOW, routing_key=WORKFLOW,
                         immutable=True)
-    s2 = exec_script.signature((SCRIPT_SAMTOOLS,),
+    s2 = exec_script.signature((SCRIPT_SAMTOOLS, run),
                         queue=WORKFLOW, routing_key=WORKFLOW,
                         immutable=True)
-    s3 = exec_script.signature((SCRIPT_HTSEQ_COUNT,),
+    s3 = exec_script.signature((SCRIPT_HTSEQ_COUNT, run),
                         queue=WORKFLOW, routing_key=WORKFLOW,
                         immutable=True)
     
@@ -42,5 +42,6 @@ if __name__ == '__main__':
     # submit N tasks asynchronously
     from labcas.celery.tasks.rnaseq.rnaseq_tasks import rnaseq_workflow
     
-    rnaseq_workflow()
+    for run in range(100):
+        rnaseq_workflow(str(run))
     
