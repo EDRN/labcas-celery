@@ -24,6 +24,8 @@ https://www.tensorflow.org/get_started/mnist/beginners
 
 import argparse
 import sys
+import time
+import os
 from tensorflow.examples.tutorials.mnist import input_data
 import tensorflow as tf
 
@@ -83,7 +85,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Tensorflow demo program")
     parser.add_argument('--num_images', type=int, help="Number of images", default=1000)
     parser.add_argument('--data_dir', type=str, help="Input data directory", default='/tmp/tensorflow/mnist/input_data')
-    parser.add_argument('--output_file', type=str, help="Output file path", default='output.txt')
+    parser.add_argument('--output_dir', type=str, help="Output directory", default='/tmp')
     
     args_dict = vars(parser.parse_args())
 
@@ -92,7 +94,18 @@ if __name__ == '__main__':
                           output_file=args_dict['output_file'])
     '''
     
+    # retrieve parameters from environment
+    num_tasks = os.getenv('NUMBER_OF_TASKS', "10")
+    num_images = os.getenv('NUMBER_OF_IMAGES', "100")
+    output_dir = os.getenv('OUTPUT_DIR', '/tmp')
+    
     # submit N tasks asynchronously
     from labcas.celery.tasks.tensorflow.task import tensorflow_task
-    for i in range(10):
-        tensorflow_task.delay(num_images=100, output_file="/tmp/output_%s.txt" % i)
+    for i in range(int(num_tasks)):
+        tensorflow_task.delay(num_images=int(num_images), output_file="%s/output_%s.txt" % (output_dir, i))
+        
+    # sleep indefinitely to keep program running
+    while True:
+        print("Sleeping...")
+        time.sleep(10)
+        
