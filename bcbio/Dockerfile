@@ -31,3 +31,10 @@ RUN pip install --no-cache-dir celery[redis] flower
 # install labcas celery package
 COPY --from=edrn/labcas-celery /usr/local/src/labcas /usr/local/src/labcas 
 ENV PYTHONPATH $PYTHONPATH:/usr/local/src
+
+# create non-privileged user to run Celery workers
+RUN groupadd -g 999 noroot && \
+    useradd -r -u 999 -g noroot -d /home/noroot noroot
+RUN mkdir -p /home/noroot && chown noroot:noroot /home/noroot
+WORKDIR /home/noroot	
+
