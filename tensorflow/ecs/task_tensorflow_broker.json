@@ -1,0 +1,165 @@
+{
+    "taskDefinition": {
+        "status": "ACTIVE", 
+        "memory": "512", 
+        "family": "tensorflow_broker", 
+        "placementConstraints": [], 
+        "requiresAttributes": [
+            {
+                "name": "com.amazonaws.ecs.capability.docker-remote-api.1.17"
+            }, 
+            {
+                "name": "com.amazonaws.ecs.capability.docker-remote-api.1.18"
+            }, 
+            {
+                "name": "com.amazonaws.ecs.capability.task-iam-role"
+            }, 
+            {
+                "name": "ecs.capability.execution-role-awslogs"
+            }, 
+            {
+                "name": "com.amazonaws.ecs.capability.logging-driver.awslogs"
+            }, 
+            {
+                "name": "com.amazonaws.ecs.capability.docker-remote-api.1.19"
+            }
+        ], 
+        "cpu": "512", 
+        "executionRoleArn": "arn:aws:iam::300153749881:role/EDRN-ecsTaskRole", 
+        "compatibilities": [
+            "EC2"
+        ], 
+        "volumes": [
+            {
+                "host": {
+                    "sourcePath": "/efs/docker/ecs/redis-data"
+                }, 
+                "name": "redis-data"
+            }
+        ], 
+        "requiresCompatibilities": [
+            "EC2"
+        ], 
+        "taskRoleArn": "arn:aws:iam::300153749881:role/EDRN-ecsTaskRole", 
+        "taskDefinitionArn": "arn:aws:ecs:us-west-2:300153749881:task-definition/tensorflow_broker:5", 
+        "containerDefinitions": [
+            {
+                "environment": [], 
+                "name": "redis", 
+                "mountPoints": [
+                    {
+                        "sourceVolume": "redis-data", 
+                        "containerPath": "/data"
+                    }
+                ], 
+                "image": "redis", 
+                "logConfiguration": {
+                    "logDriver": "awslogs", 
+                    "options": {
+                        "awslogs-region": "us-west-2", 
+                        "awslogs-stream-prefix": "ecs", 
+                        "awslogs-group": "/ecs/labcas_tensorflow"
+                    }
+                }, 
+                "dockerLabels": {
+                    "application": "tensorflow", 
+                    "component": "redis", 
+                    "stack": "labcas"
+                }, 
+                "cpu": 0, 
+                "portMappings": [
+                    {
+                        "protocol": "tcp", 
+                        "containerPort": 6379, 
+                        "hostPort": 6379
+                    }
+                ], 
+                "command": [
+                    "redis-server", 
+                    "--appendonly", 
+                    "yes"
+                ], 
+                "essential": true, 
+                "volumesFrom": []
+            }, 
+            {
+                "environment": [
+                    {
+                        "name": "CELERY_BROKER_URL", 
+                        "value": "redis://redis:6379/0"
+                    }, 
+                    {
+                        "name": "CELERY_BACKEND_URL", 
+                        "value": "redis://redis:6379/0"
+                    }
+                ], 
+                "name": "flower", 
+                "links": [
+                    "redis:redis"
+                ], 
+                "mountPoints": [], 
+                "image": "edrn/labcas-celery-tensorflow:latest", 
+                "logConfiguration": {
+                    "logDriver": "awslogs", 
+                    "options": {
+                        "awslogs-region": "us-west-2", 
+                        "awslogs-stream-prefix": "ecs", 
+                        "awslogs-group": "/ecs/labcas_tensorflow"
+                    }
+                }, 
+                "dockerLabels": {
+                    "application": "tensorflow", 
+                    "component": "flower", 
+                    "stack": "labcas"
+                }, 
+                "cpu": 0, 
+                "portMappings": [], 
+                "command": [
+                    "celery", 
+                    "-A", 
+                    "labcas.celery.worker", 
+                    "flower", 
+                    "-l", 
+                    "info", 
+                    "--url_prefix=flower"
+                ], 
+                "user": "noroot", 
+                "essential": true, 
+                "volumesFrom": []
+            }, 
+            {
+                "environment": [], 
+                "name": "nginx", 
+                "links": [
+                    "flower:flower"
+                ], 
+                "mountPoints": [], 
+                "image": "edrn/labcas-nginx", 
+                "dockerLabels": {
+                    "application": "tensorflow", 
+                    "component": "nginx", 
+                    "stack": "labcas"
+                }, 
+                "cpu": 0, 
+                "portMappings": [
+                    {
+                        "protocol": "tcp", 
+                        "containerPort": 80, 
+                        "hostPort": 8080
+                    }
+                ], 
+                "logConfiguration": {
+                    "logDriver": "awslogs", 
+                    "options": {
+                        "awslogs-region": "us-west-2", 
+                        "awslogs-stream-prefix": "ecs", 
+                        "awslogs-group": "/ecs/labcas_tensorflow"
+                    }
+                }, 
+                "essential": true, 
+                "volumesFrom": []
+            }
+        ], 
+        "revision": 5
+    }
+}

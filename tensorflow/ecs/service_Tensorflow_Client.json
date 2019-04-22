@@ -1,0 +1,83 @@
+{
+    "taskDefinition": {
+        "status": "ACTIVE", 
+        "memory": "256", 
+        "family": "tensorflow_client", 
+        "placementConstraints": [], 
+        "requiresAttributes": [
+            {
+                "name": "com.amazonaws.ecs.capability.docker-remote-api.1.17"
+            }, 
+            {
+                "name": "com.amazonaws.ecs.capability.task-iam-role"
+            }, 
+            {
+                "name": "ecs.capability.execution-role-awslogs"
+            }, 
+            {
+                "name": "com.amazonaws.ecs.capability.logging-driver.awslogs"
+            }, 
+            {
+                "name": "com.amazonaws.ecs.capability.docker-remote-api.1.19"
+            }
+        ], 
+        "cpu": "256", 
+        "executionRoleArn": "arn:aws:iam::300153749881:role/EDRN-ecsTaskRole", 
+        "compatibilities": [
+            "EC2"
+        ], 
+        "volumes": [], 
+        "requiresCompatibilities": [
+            "EC2"
+        ], 
+        "taskRoleArn": "arn:aws:iam::300153749881:role/EDRN-ecsTaskRole", 
+        "taskDefinitionArn": "arn:aws:ecs:us-west-2:300153749881:task-definition/tensorflow_client:4", 
+        "containerDefinitions": [
+            {
+                "environment": [
+                    {
+                        "name": "NUMBER_OF_IMAGES", 
+                        "value": "1000"
+                    }, 
+                    {
+                        "name": "OUTPUT_DIR", 
+                        "value": "/output"
+                    }, 
+                    {
+                        "name": "CELERY_BACKEND_URL", 
+                        "value": "redis://internal-redis-load-balancer2-1813790183.us-west-2.elb.amazonaws.com:6379/0"
+                    }, 
+                    {
+                        "name": "NUMBER_OF_TASKS", 
+                        "value": "10000"
+                    }, 
+                    {
+                        "name": "CELERY_BROKER_URL", 
+                        "value": "redis://internal-redis-load-balancer2-1813790183.us-west-2.elb.amazonaws.com:6379/0"
+                    }
+                ], 
+                "name": "celery-client", 
+                "mountPoints": [], 
+                "image": "edrn/labcas-celery-tensorflow:latest", 
+                "logConfiguration": {
+                    "logDriver": "awslogs", 
+                    "options": {
+                        "awslogs-region": "us-west-2", 
+                        "awslogs-stream-prefix": "ecs", 
+                        "awslogs-group": "/ecs/tensorflow-client"
+                    }
+                }, 
+                "cpu": 0, 
+                "portMappings": [], 
+                "command": [
+                    "python", 
+                    "labcas/celery/tasks/tensorflow/task.py"
+                ], 
+                "user": "noroot", 
+                "essential": true, 
+                "volumesFrom": []
+            }
+        ], 
+        "revision": 4
+    }
+}

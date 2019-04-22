@@ -1,0 +1,104 @@
+{
+    "taskDefinition": {
+        "status": "ACTIVE", 
+        "memory": "1024", 
+        "family": "tensorflow_worker", 
+        "placementConstraints": [], 
+        "requiresAttributes": [
+            {
+                "name": "com.amazonaws.ecs.capability.docker-remote-api.1.18"
+            }, 
+            {
+                "name": "com.amazonaws.ecs.capability.task-iam-role"
+            }, 
+            {
+                "name": "ecs.capability.execution-role-awslogs"
+            }, 
+            {
+                "name": "com.amazonaws.ecs.capability.logging-driver.awslogs"
+            }, 
+            {
+                "name": "com.amazonaws.ecs.capability.docker-remote-api.1.19"
+            }
+        ], 
+        "cpu": "1024", 
+        "executionRoleArn": "arn:aws:iam::300153749881:role/EDRN-ecsTaskRole", 
+        "compatibilities": [
+            "EC2"
+        ], 
+        "volumes": [
+            {
+                "host": {
+                    "sourcePath": "/efs/docker/ecs/tensorflow-data"
+                }, 
+                "name": "tensorflow-data"
+            }, 
+            {
+                "host": {
+                    "sourcePath": "/efs/docker/ecs/tensorflow-output"
+                }, 
+                "name": "tensorflow-output"
+            }
+        ], 
+        "requiresCompatibilities": [
+            "EC2"
+        ], 
+        "taskRoleArn": "arn:aws:iam::300153749881:role/EDRN-ecsTaskRole", 
+        "taskDefinitionArn": "arn:aws:ecs:us-west-2:300153749881:task-definition/tensorflow_worker:3", 
+        "containerDefinitions": [
+            {
+                "environment": [
+                    {
+                        "name": "CELERY_BROKER_URL", 
+                        "value": "redis://internal-redis-load-balancer2-1813790183.us-west-2.elb.amazonaws.com:6379/0"
+                    }, 
+                    {
+                        "name": "CELERY_BACKEND_URL", 
+                        "value": "redis://internal-redis-load-balancer2-1813790183.us-west-2.elb.amazonaws.com:6379/0"
+                    }
+                ], 
+                "name": "celery-worker", 
+                "links": [], 
+                "mountPoints": [
+                    {
+                        "sourceVolume": "tensorflow-data", 
+                        "containerPath": "/tmp/tensorflow/mnist/input_data"
+                    }, 
+                    {
+                        "sourceVolume": "tensorflow-output", 
+                        "containerPath": "/output"
+                    }
+                ], 
+                "image": "edrn/labcas-celery-tensorflow:latest", 
+                "logConfiguration": {
+                    "logDriver": "awslogs", 
+                    "options": {
+                        "awslogs-region": "us-west-2", 
+                        "awslogs-stream-prefix": "ecs", 
+                        "awslogs-group": "/ecs/tensorflow_worker"
+                    }
+                }, 
+                "dockerLabels": {
+                    "application": "tensorflow", 
+                    "component": "worker", 
+                    "stack": "labcas"
+                }, 
+                "cpu": 0, 
+                "portMappings": [], 
+                "command": [
+                    "celery", 
+                    "-A", 
+                    "labcas.celery.worker", 
+                    "worker", 
+                    "-l", 
+                    "info", 
+                    "-c", 
+                    "1"
+                ], 
+                "essential": true, 
+                "volumesFrom": []
+            }
+        ], 
+        "revision": 3
+    }
+}
