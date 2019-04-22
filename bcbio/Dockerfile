@@ -14,6 +14,8 @@ ENV PATH=${CONDA_HOME}/bin:$PATH
 
 # install bcbio without downloading data
 RUN wget https://raw.github.com/bcbio/bcbio-nextgen/master/scripts/bcbio_nextgen_install.py
-RUN python bcbio_nextgen_install.py /usr/local/share/bcbio-nextgen\
-    --tooldir=/usr/local --aligners bwa --aligners bowtie2\
+ENV BCBIO_INSTALL /efs-ecs/docker/bcbio
+RUN mkdir -p $BCBIO_INSTALL/data $BCBIO_INSTALL/tools
+RUN python bcbio_nextgen_install.py $BCBIO_INSTALL/data\
+    --tooldir=$BCBIO_INSTALL/tools --aligners bwa --aligners bowtie2\
     --isolate --minimize-disk --nodata
