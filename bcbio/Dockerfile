@@ -26,7 +26,7 @@ RUN python bcbio_nextgen_install.py $BCBIO_INSTALL/data\
 RUN pip install --no-cache-dir celery[redis] flower
 
 # install labcas celery package
-COPY --from=labcas-celery /usr/local/src/labcas /usr/local/src/labcas 
+COPY --from=edrn/labcas-celery /usr/local/src/labcas /usr/local/src/labcas 
 ENV PYTHONPATH $PYTHONPATH:/usr/local/src
 
 # create non-privileged user to run Celery workers
