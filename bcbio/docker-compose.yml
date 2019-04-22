@@ -1,0 +1,28 @@
+# docker-compose file to run the bcbio data processing pipeline
+# required env variables:
+# BCBIO_DATA: location of bcbio datafiles (genomes, etc.)
+# BCBIO_PROJECTS: location of bcbio projects configuration
+
+version: '3.3'
+
+services:
+
+  # LabCAS Celery worker with bcbio tools
+  celery-worker:
+    image: edrn/labcas-celery-bcbio
+    command: ["celery", "-A",  "labcas.celery.worker", "worker", "--loglevel=info", "-Q", "bcbio", "-n", "bcbio-worker", "-c", "1"]
+    user: root
+    build:
+      # context path is relative to location of this docker-compose file
+      context: .
+    volumes:
+      # note: the host directory ${HOME}/data/smart3seq/ must exist and be writable by anybody
+      - /efs-ecs/docker/bcbio/data/:/efs-ecs/docker/bcbio/data
+      - /efs-ecs/docker/bcbio/projects:/efs-ecs/docker/bcbio/projects
+      
+  # override flower container to use the image that includes the RNA-Sequencing tasks
+  flower:
+    image: edrn/labcas-celery-bcbio
+
+    
+      
