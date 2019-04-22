@@ -11,7 +11,7 @@ RUN apt-get update && \
 # create non-privileged user to run Celery workers
 RUN groupadd -g 999 noroot && \
     useradd -r -u 999 -g noroot -d /home/noroot noroot &&\
-    mkdir =p /home/noroot &&\
+    mkdir -p /home/noroot &&\
     chown noroot:noroot /home/noroot
  
 # install bowtie2
