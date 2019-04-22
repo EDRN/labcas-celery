@@ -21,6 +21,7 @@ RUN mkdir -p $BCBIO_INSTALL/data $BCBIO_INSTALL/tools
 RUN python bcbio_nextgen_install.py $BCBIO_INSTALL/data\
     --tooldir=$BCBIO_INSTALL/tools --aligners bwa --aligners bowtie2\
     --isolate --minimize-disk --nodata
+ENV PATH=$PATH:$BCBIO_INSTALL/tools/bin
 
 # install Celery and Flower
 RUN pip install --no-cache-dir celery[redis] flower
@@ -33,5 +34,11 @@ ENV PYTHONPATH $PYTHONPATH:/usr/local/src
 RUN groupadd -g 999 noroot && \
     useradd -r -u 999 -g noroot -d /home/noroot noroot
 RUN mkdir -p /home/noroot && chown noroot:noroot /home/noroot
-WORKDIR /home/noroot	
+WORKDIR /home/noroot
+
+# install bcbio python tasks within labcas package
+COPY src/labcas/celery/tasks/bcbio/ /usr/local/src/labcas/celery/tasks/bcbio/
+
+# install program scripts
+COPY scripts /usr/local/bin
 
