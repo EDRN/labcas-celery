@@ -15,19 +15,16 @@ RUN cd /usr/local && \
     conda install python=3.6
 
 # install bcbio without downloading data
-# note: installation path '/efs-ecs/docker/bcbio' must match verbatim the path on the host
-# because paths are hard-wired in the bcbio configuration
 RUN wget https://raw.github.com/bcbio/bcbio-nextgen/master/scripts/bcbio_nextgen_install.py
 ENV BCBIO_INSTALL /efs-ecs/docker/bcbio
 RUN mkdir -p $BCBIO_INSTALL/data $BCBIO_INSTALL/tools
 RUN python bcbio_nextgen_install.py $BCBIO_INSTALL/data\
     --tooldir=$BCBIO_INSTALL/tools --aligners bwa --aligners bowtie2\
     --isolate --minimize-disk --nodata
-ENV PATH=$PATH:$BCBIO_INSTALL/tools/bin/
 
 # install Celery and Flower
 RUN pip install --no-cache-dir celery[redis] flower
 
 # install labcas celery package
-COPY --from=edrn/labcas-celery /usr/local/src/labcas /usr/local/src/labcas 
+COPY --from=labcas-celery /usr/local/src/labcas /usr/local/src/labcas 
 ENV PYTHONPATH $PYTHONPATH:/usr/local/src
