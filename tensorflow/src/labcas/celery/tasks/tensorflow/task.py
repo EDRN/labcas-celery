@@ -32,7 +32,7 @@ import tensorflow as tf
 from labcas.celery.worker import app
 
 @app.task
-def tensorflow_task(num_images=1000, data_dir='/tmp/tensorflow/mnist/input_data', output_file='output.txt'):
+def tensorflow_task(num_images=1000, data_dir='/tmp', output_file='output.txt'):
 
   # Import data
   mnist = input_data.read_data_sets(data_dir, one_hot=True)
@@ -95,13 +95,14 @@ if __name__ == '__main__':
     '''
     
     # retrieve parameters from environment
-    num_tasks = os.getenv('NUMBER_OF_TASKS', "10")
-    num_images = os.getenv('NUMBER_OF_IMAGES', "100")
+    num_tasks = os.getenv('NUMBER_OF_TASKS', "100")
+    num_images = os.getenv('NUMBER_OF_IMAGES', "1000")
     output_dir = os.getenv('OUTPUT_DIR', '/tmp')
     
     # submit N tasks asynchronously
     from labcas.celery.tasks.tensorflow.task import tensorflow_task
     for i in range(int(num_tasks)):
+        print("Submitting job=%s" % i)
         tensorflow_task.delay(num_images=int(num_images), output_file="%s/output_%s.txt" % (output_dir, i))
         
     # sleep indefinitely to keep program running
