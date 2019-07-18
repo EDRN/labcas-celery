@@ -21,7 +21,7 @@ ML: "5" # Minimum length read after adapter trimming
 
 # Reference info
 REF_GENOME: "/star_ref/GRCh38.primary_assembly.genome.fa"
-GTF: "/star_ref/gencode.v31.primary_assembly.annotation.gtf"
+GTF: "/star_ref/gencode.v26.primary_assembly.annotation.gtf"
 STAR_DIR: "/star_ref"
 TEMP_DIR: "/star_ref/_STARtmp"
 
