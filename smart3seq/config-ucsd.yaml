@@ -44,7 +44,7 @@ UMI_TOOLS: "./umi-dedup"
 RAM: "2000000000"
 
 # Project directory, must exist
-PROJECT_DIR: "/Smart-3Seq/UCSD"
+PROJECT_DIR: "/project"
 
 # Fastq directory which contains fastq.gz files corresponding to SAMPLES
-FASTQ_DIR: "/Smart-3Seq/UCSD/fastq"
+FASTQ_DIR: "/project/fastq"
