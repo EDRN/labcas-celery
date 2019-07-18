@@ -32,4 +32,4 @@ RUN cd /usr/local/SMART-3SEQ-smk/code &&\
     git clone https://github.com/jwfoley/3SEQtools.git &&\
     git clone https://github.com/jwfoley/umi-dedup.git
 
-COPY config.yaml /usr/local/SMART-3SEQ-smk/code/config.yaml
+#COPY config.yaml /usr/local/SMART-3SEQ-smk/code/config.yaml
