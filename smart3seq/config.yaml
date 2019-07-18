@@ -2,6 +2,17 @@
 SAMPLES:
   - "7_23_LCM_Cap6_S1_L002_R1_001"
   - "7_23_LCM_Cap8_S2_L002_R1_001"
+  - "7_26_LCM_Cap10_S12_L002_R1_001"
+  - "7_26_LCM_Cap11_S13_L002_R1_001"
+  - "7_26_LCM_Cap12_S14_L002_R1_001"
+  - "7_26_LCM_Cap2_S4_L002_R1_001"
+  - "7_26_LCM_Cap3_S5_L002_R1_001"
+  - "7_26_LCM_Cap4_S6_L002_R1_001"
+  - "7_26_LCM_Cap5_S7_L002_R1_001"
+  - "7_26_LCM_Cap6_S8_L002_R1_001"
+  - "7_26_LCM_Cap7_S9_L002_R1_001"
+  - "7_26_LCM_Cap8_S10_L002_R1_001"
+  - "7_26_LCM_Cap9_S11_L002_R1_001"
 
 # Read group names to use in bam files
 RG_NAME: "7_23_LCM"
