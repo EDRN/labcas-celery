@@ -103,62 +103,60 @@ def register_folder(fixed_dapi, dapi_file, mx, my, in_folder, out_folder):
     return 'done: '+dapi_file
 
 
+def main(input_path, output_path, parallel=1):
+    # split processing over multiple cores
+    # or just turn it off and call registration sequentially
+    #parallel = 1
 
-
-
-# root folder in which each subfolder contains a round of imaging
-input_path = '/Users/altinok/Desktop/3d/5.31/tiff/'
-# root folder where the output to be written
-output_path = '/Users/altinok/Desktop/3d/5.31/new_run_registered_tif/'
-
-input_folder = input_path.split(os.path.sep)[-2]
-output_folder = output_path.split(os.path.sep)[-2]
-
-# copy folder structure
-for dirpath, dirnames, filenames in os.walk(input_path):
-    structure = os.path.join(output_path, dirpath[len(input_path):])
-    if not os.path.isdir(structure):
-        os.mkdir(structure)
+    input_folder = input_path.split(os.path.sep)[-2]
+    output_folder = output_path.split(os.path.sep)[-2]
+    
+    # copy folder structure
+    for dirpath, dirnames, filenames in os.walk(input_path):
+        structure = os.path.join(output_path, dirpath[len(input_path):])
+        if not os.path.isdir(structure):
+            os.mkdir(structure)
+        else:
+            print('Folder already exists.')
+    
+    
+    # we'll scan all files for the largest image size
+    tif_files = glob2.glob(os.path.join(input_path, '**/*.tif'))
+    
+    # all dapi-channels
+    dapi_files = [f for f in tif_files if f.lower().find('dapi') > 0]
+    
+    # largest image size
+    mx,my = get_max_frame_size(tif_files)
+    
+    # anchor round, againt which we register all other rounds
+    dapi_fixed = dapi_files.pop()
+    
+    # make a copy of the fixed foldern to the destination
+    fixed_folder = os.path.split(dapi_fixed)[0]
+    fixed_files = glob2.glob(os.path.join(fixed_folder, '**/*.tif'))
+    for f in fixed_files:
+        im1 = tifffile.imread(f)
+        im1 = np.squeeze(im1)
+        im1 = pad_frame(im1, mx, my)
+        tifffile.imwrite(f.replace( input_folder , output_folder ),data=im1)
+        
+    if parallel:
+        import multiprocessing as mp
+        pool = mp.Pool(mp.cpu_count())
+        results = [pool.apply_async(register_folder, args=(dapi_fixed, f, mx, my, input_folder, output_folder)) for f in dapi_files]
+        pool.close()
+        pool.join()
+        [print(r) for r in results]
     else:
-        print('Folder already exists.')
+        for f in dapi_files:
+            register_folder(dapi_fixed, f, mx, my, input_folder, output_folder)
 
 
-# we'll scan all files for the largest image size
-tif_files = glob2.glob(os.path.join(input_path, '**/*.tif'))
-
-# all dapi-channels
-dapi_files = [f for f in tif_files if f.lower().find('dapi') > 0]
-
-# largest image size
-mx,my = get_max_frame_size(tif_files)
-
-# anchor round, againt which we register all other rounds
-dapi_fixed = dapi_files.pop()
-
-# make a copy of the fixed foldern to the destination
-fixed_folder = os.path.split(dapi_fixed)[0]
-fixed_files = glob2.glob(os.path.join(fixed_folder, '**/*.tif'))
-for f in fixed_files:
-    im1 = tifffile.imread(f)
-    im1 = np.squeeze(im1)
-    im1 = pad_frame(im1, mx, my)
-    tifffile.imwrite(f.replace( input_folder , output_folder ),data=im1)
-
-
-# split processing over multiple cores
-# or just turn it off and call registration sequentially
-parallel = 1
-
-if parallel:
-    import multiprocessing as mp
-    pool = mp.Pool(mp.cpu_count())
-    results = [pool.apply_async(register_folder, args=(dapi_fixed, f, mx, my, input_folder, output_folder)) for f in dapi_files]
-    pool.close()
-    pool.join()
-    [print(r) for r in results]
-else:
-    for f in dapi_files:
-        register_folder(dapi_fixed, f, mx, my, input_folder, output_folder)
-
-
+if __name__ == "__main__":
+    
+   (input_path, output_path) = sys.argv[1:]
+   print("input_path = %s" % input_path)
+   print("output_path = %s" % output_path)
+   main(input_path, output_path)
 
