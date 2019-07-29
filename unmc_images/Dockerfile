@@ -5,7 +5,7 @@ RUN apt-get update
 
 RUN pip install scikit-image tifffile glob2
 
-COPY translate_multi_channel_frames.py /usr/local/translate_multi_channel_frames.py
+COPY translate_multi_channel_frames.py /usr/local/bin/translate_multi_channel_frames_parallel.py
 
-WORKDIR /usr/local
-ENTRYPOINT ["python", "translate_multi_channel_frames.py"]
+WORKDIR /usr/local/bin
+ENTRYPOINT ["python", "translate_multi_channel_frames_parallel.py"]
