@@ -33,9 +33,9 @@ spec:
       volumes: 
         - name: output-data
           hostPath:
-            path: /efs/docker/labcas/edrn/archive/UNMC_Test_Data/registered_tiff2
+            path: /efs-ecs/docker/labcas/UNMC_Test_Data/registered_tiff
             type: Directory 
         - name: input-data
           hostPath:
-            path: /efs/docker/labcas/edrn/archive/UNMC_Test_Data/tiff
+            path: /efs-ecs/docker/labcas/UNMC_Test_Data/tiff
             type: Directory
