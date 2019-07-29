@@ -104,7 +104,7 @@ def register_folder(fixed_dapi, dapi_file, mx, my, in_folder, out_folder):
     return 'done: '+dapi_file
 
 
-def main(input_path, output_path, parallel=1):
+def main(input_path, output_path, parallel=0):
     # split processing over multiple cores
     # or just turn it off and call registration sequentially
     #parallel = 1
