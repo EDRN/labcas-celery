@@ -1,0 +1,41 @@
+# Kubernetes job to run a single iteration of translate_multi_channel_frames_parallel.py
+apiVersion: batch/v1
+kind: Job
+metadata:
+  generateName: unmc-
+  labels:
+    app: labcas-unmc
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: translator
+          image: edrn/labcas-celery-unmc-images
+          command:
+            - python 
+            - -u 
+            - translate_multi_channel_frames_parallel.py 
+            - /input_data/ 
+            - /output_data/
+          volumeMounts:
+            - name: output_data
+              mountPath: /output_data
+            - name: input_data
+              mountPath: /input_data
+          resources:
+            requests:
+              memory: "32Gi"
+              cpu: "4"
+            limits:
+              memory: "32Gi"
+              cpu: "4"
+      volumes: 
+        - name: output_data
+          hostPath:
+            path: /efs/docker/labcas/edrn/archive/UNMC_Test_Data/registered_tiff2
+            type: Directory 
+        - name: input_data
+          hostPath:
+            path: /efs/docker/labcas/edrn/archive/UNMC_Test_Data/tiff
+            type: Directory
