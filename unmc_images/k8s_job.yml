@@ -19,23 +19,23 @@ spec:
             - /input_data/ 
             - /output_data/
           volumeMounts:
-            - name: output_data
+            - name: output-data
               mountPath: /output_data
-            - name: input_data
+            - name: input-data
               mountPath: /input_data
           resources:
             requests:
-              memory: "32Gi"
+              memory: "60Gi"
               cpu: "4"
             limits:
-              memory: "32Gi"
+              memory: "60Gi"
               cpu: "4"
       volumes: 
-        - name: output_data
+        - name: output-data
           hostPath:
-            path: /efs/docker/labcas/edrn/archive/UNMC_Test_Data/registered_tiff2
+            path: /efs-ecs/docker/labcas/UNMC_Test_Data/registered_tiff
             type: Directory 
-        - name: input_data
+        - name: input-data
           hostPath:
-            path: /efs/docker/labcas/edrn/archive/UNMC_Test_Data/tiff
+            path: /efs-ecs/docker/labcas/UNMC_Test_Data/tiff
             type: Directory
