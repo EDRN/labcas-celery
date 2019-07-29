@@ -20,6 +20,7 @@
 '''
 
 import numpy as np
+import sys
 
 from PIL import Image
 # need to increase the limit to accommodate large size images
