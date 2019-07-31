@@ -145,7 +145,8 @@ def main(input_path, output_path, parallel=0):
     if parallel:
         import multiprocessing as mp
         pool = mp.Pool(mp.cpu_count())
-        results = [pool.apply_async(register_folder, args=(dapi_fixed, f, mx, my, input_folder, output_folder)) for f in dapi_files]
+        #results = [pool.apply_async(register_folder, args=(dapi_fixed, f, mx, my, input_folder, output_folder)) for f in dapi_files]
+        results = [pool.apply(register_folder, args=(dapi_fixed, f, mx, my, input_folder, output_folder)) for f in dapi_files]
         pool.close()
         pool.join()
         [print(r) for r in results]
