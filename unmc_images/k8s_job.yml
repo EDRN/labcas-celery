@@ -12,6 +12,7 @@ spec:
       containers:
         - name: translator
           image: edrn/labcas-celery-unmc-images
+          imagePullPolicy: Always
           command:
             - python 
             - -u 
@@ -33,9 +34,11 @@ spec:
       volumes: 
         - name: output-data
           hostPath:
-            path: /efs-ecs/docker/labcas/UNMC_Test_Data/registered_tiff
+            #path: /efs-ecs/docker/labcas/UNMC_Test_Data/registered_tiff
+            path: "/efs/docker/labcas/edrn/archive/UNMC (Krysten)/Primary/UNMCPC.PANC112rf4530 (TIFF_registered)"
             type: Directory 
         - name: input-data
           hostPath:
-            path: /efs-ecs/docker/labcas/UNMC_Test_Data/tiff
+            #path: /efs-ecs/docker/labcas/UNMC_Test_Data/tiff
+            path: "/efs/docker/labcas/edrn/archive/UNMC (Krysten)/Primary/UNMCPC.PANC112rf4530 (TIFF)"
             type: Directory
