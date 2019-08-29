@@ -1,22 +1,23 @@
 # Sample information
 SAMPLES:
-<<<<<<< HEAD
-  - "7_23_LCM_Cap6_S1_L002_R1_001"
-  - "7_23_LCM_Cap8_S2_L002_R1_001"
-  - "7_26_LCM_Cap10_S12_L002_R1_001"
-  - "7_26_LCM_Cap11_S13_L002_R1_001"
-  - "7_26_LCM_Cap12_S14_L002_R1_001"
-  - "7_26_LCM_Cap2_S4_L002_R1_001"
-  - "7_26_LCM_Cap3_S5_L002_R1_001"
-  - "7_26_LCM_Cap4_S6_L002_R1_001"
-  - "7_26_LCM_Cap5_S7_L002_R1_001"
-  - "7_26_LCM_Cap6_S8_L002_R1_001"
-  - "7_26_LCM_Cap7_S9_L002_R1_001"
-  - "7_26_LCM_Cap8_S10_L002_R1_001"
-  - "7_26_LCM_Cap9_S11_L002_R1_001"
+  - "9638_32_normal_1"
+  - "9641_32_HGPIN_2"
+  - "9646_32_T5_1"
+  - "9665_33_HGPIN_3"
+  - "9666_33_normal_1"
+  - "9673_34_HGPIN_1_S18_R1_001"
+  - "9681_34_T4_1"
+  - "9681_34_T4_1"
+  - "9697_35_T4_1"
+  - "9709_35_HGPIN_1"
+  - "9715_35_normal_4_S25_R1_001"
+  - "9717_36_T4_1_S35_R1_001"
+  - "9727_36_HGPIN_3"
+  - "9737_36_normal_2"
+  - "9757_33_T4_1_S32_R1_001"
 
 # Read group names to use in bam files
-RG_NAME: "7_23_LCM"
+RG_NAME: "MCL-SMART3SEQ"
 
 # Adapter sequences
 ADAPTER_3_PRIME: "AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC"
@@ -45,7 +46,7 @@ UMI_TOOLS: "./umi-dedup"
 RAM: "2000000000"
 
 # Project directory, must exist
-PROJECT_DIR: "/Smart-3Seq/UCSD"
+PROJECT_DIR: "/project"
 
 # Fastq directory which contains fastq.gz files corresponding to SAMPLES
-FASTQ_DIR: "/Smart-3Seq/UCSD/fastq"
+FASTQ_DIR: "/project/fastq"
