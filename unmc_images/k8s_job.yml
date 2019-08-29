@@ -35,10 +35,10 @@ spec:
         - name: output-data
           hostPath:
             #path: /efs-ecs/docker/labcas/UNMC_Test_Data/registered_tiff
-            path: /efs-ecs/docker/labcas/edrn/archive/UNMC_Pancreatic_Cancer_MxIF_Images/Primary/UNMCPC.PANC112rf4530.TIFF_REGISTERED
+            path: /efs-ecs/docker/labcas/edrn/archive/UNMC_Pancreatic_Cancer_MxIF_Images/Liver/UNMCPC.Liver86rf3504_registered_tiff
             type: Directory 
         - name: input-data
           hostPath:
             #path: /efs-ecs/docker/labcas/UNMC_Test_Data/tiff
-            path: /efs-ecs/docker/labcas/edrn/archive/UNMC_Pancreatic_Cancer_MxIF_Images/Primary/UNMCPC.PANC112rf4530.TIFF
+            path: /efs-ecs/docker/labcas/edrn/archive/UNMC_Pancreatic_Cancer_MxIF_Images/Liver/UNMCPC.Liver86rf3504
             type: Directory
