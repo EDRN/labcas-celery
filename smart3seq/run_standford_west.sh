@@ -4,7 +4,7 @@
 CONFIG_FILE=/usr/local/edrn/src/labcas-celery/smart3seq/config-standford-west.yaml
 PROJECT_DIR=/efs/docker/labcas/mcl/archive/Smart-3Seq/stanford_west
 
-docker run -it -v $CONFIG_FILE:/usr/local/SMART-3SEQ-smk/code/config.yaml\
-               -v /efs/docker/labcas/smart3seq/star_ref:/star_ref\
-               -v $PROJECT_DIR:/project\
-               edrn/labcas-smart3seq:latest sh -c "source activate smart-3seq && snakemake --snakefile pipeline.smk --configfile config.yaml -j 4"
+docker run -itd -v $CONFIG_FILE:/usr/local/SMART-3SEQ-smk/code/config.yaml\
+                -v /efs/docker/labcas/smart3seq/star_ref:/star_ref\
+                -v $PROJECT_DIR:/project\
+                edrn/labcas-smart3seq:latest sh -c "source activate smart-3seq && snakemake --snakefile pipeline.smk --configfile config.yaml -j 4"
