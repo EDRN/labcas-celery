@@ -6,14 +6,14 @@ all the MD Anderson Smart-3seq jobs.
 import os
 
 # directory containing fastq files (must be accessible to Kubernetes pods)
-project_dir = "/Users/cinquini/data/Smart-3Seq/MDAnderson_Maitra/fastq"
+project_dir = "/efs-ecs/docker/labcas/mcl/archive/Smart-3Seq/MDAnderson_Maitra/fastq"
 
 # directory to write config files (must be accessible to Kubernetes pods)
-configs_dir = "/tmp/configs"
+configs_dir = "/efs-ecs/docker/labcas/smart3seq/mdanderson_maitra/configs"
 os.makedirs(configs_dir, exist_ok=True)
 
 # directory to write k8s jobs to
-jobs_dir = "/tmp/jobs"
+jobs_dir = "/efs-ecs/docker/labcas/smart3seq/mdanderson_maitra/jobs"
 os.makedirs(jobs_dir, exist_ok=True)
 
 # template files (in current directory)
@@ -52,6 +52,3 @@ for f in fastq_files:
         print("Executing command: %s" % command)
         os.system(command)
             
-        # FIXME
-        break
-
