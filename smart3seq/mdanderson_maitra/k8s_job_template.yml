@@ -4,7 +4,7 @@ kind: Job
 metadata:
   generateName: smart3seq-md-
   labels:
-    app: smart3seq-md-
+    app: smart3seq-md
 spec:
   template:
     spec:
