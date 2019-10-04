@@ -21,29 +21,29 @@ spec:
               && 
               snakemake --snakefile pipeline.smk --configfile config.yaml -j 8
           volumeMounts:
-            - name: project_dir
+            - name: project-dir
               mountPath: /project
-            - name: config_file
+            - name: config-file
               mountPath: /usr/local/SMART-3SEQ-smk/code/config.yaml
-            - name: star_dir
+            - name: star-dir
               mountPath: /star_ref
           resources:
             requests:
               memory: "60Gi"
-              cpu: "4"
+              cpu: "8"
             limits:
               memory: "60Gi"
-              cpu: "4"
+              cpu: "8"
       volumes: 
-        - name: project_dir
+        - name: project-dir
           hostPath:
             path: /efs/docker/labcas/mcl/archive/Smart-3Seq/MDAnderson_Maitra
             type: Directory 
-        - name: config_file
+        - name: config-file
           hostPath:
             path: /home/cinquini/src/labcas-celery/smart3seq/config-mdanderson-maitra.yaml
             type: File
-        - name: star_dir
+        - name: star-dir
           hostPath:
             path: /efs/docker/labcas/smart3seq/star_ref
             type: Directory 
