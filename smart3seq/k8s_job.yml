@@ -1,0 +1,50 @@
+# Kubernetes job to run a single iteration of translate_multi_channel_frames_parallel.py
+apiVersion: batch/v1
+kind: Job
+metadata:
+  generateName: smart3seq-md
+  labels:
+    app: smart3seq-md
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: labcas-smart3seq
+          image: edrn/labcas-smart3seq:latest
+          imagePullPolicy: Always
+          command:
+            - /bin/sh
+            - -c
+            - |
+              source activate smart-3seq 
+              && 
+              snakemake --snakefile pipeline.smk --configfile config.yaml -j 8
+          volumeMounts:
+            - name: project_dir
+              mountPath: /project
+            - name: config_file
+              mountPath: /usr/local/SMART-3SEQ-smk/code/config.yaml
+            - name: star_dir
+              mountPath: /star_ref
+          resources:
+            requests:
+              memory: "60Gi"
+              cpu: "4"
+            limits:
+              memory: "60Gi"
+              cpu: "4"
+      volumes: 
+        - name: project_dir
+          hostPath:
+            path: /efs/docker/labcas/mcl/archive/Smart-3Seq/MDAnderson_Maitra
+            type: Directory 
+        - name: config_file
+          hostPath:
+            path: /home/cinquini/src/labcas-celery/smart3seq/config-mdanderson-maitra.yaml
+            type: File
+        - name: star_dir
+          hostPath:
+            path: /efs/docker/labcas/smart3seq/star_ref
+            type: Directory 
+        
