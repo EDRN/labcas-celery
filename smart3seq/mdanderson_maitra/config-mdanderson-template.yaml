@@ -1,6 +1,5 @@
 # Sample information
 SAMPLES:
-# - "UT02-ND_3
   - "@THE_SAMPLE@"
 
 # Read group names to use in bam files
