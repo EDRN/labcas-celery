@@ -1,0 +1,39 @@
+# Sample information
+SAMPLES:
+# - "UT02-ND_3
+  - "@THE_SAMPLE@"
+
+# Read group names to use in bam files
+RG_NAME: "MCL-SMART3SEQ"
+
+# Adapter sequences
+ADAPTER_3_PRIME: "AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC"
+ADAPTER_5_PRIME: "ATCTCGTATGCCGTCTTCTGCTTG"
+
+# 3SEQ-tools parameters
+N: "5"  # Length of UMI
+G: "3"  # Length of G-overhang
+A: "8"  # Minimum length of homopolymer detection
+M: "1"  # Number of mismatches allowed
+
+# Other parameters
+ML: "5" # Minimum length read after adapter trimming
+
+# Reference info
+REF_GENOME: "/star_ref/GRCh38.primary_assembly.genome.fa"
+GTF: "/star_ref/gencode.v26.primary_assembly.annotation.gtf"
+STAR_DIR: "/star_ref"
+TEMP_DIR: "/star_ref/_STARtmp"
+
+# Software
+THREE_SEQ: "./3SEQtools"
+UMI_TOOLS: "./umi-dedup"
+
+# CPU information
+RAM: "2000000000"
+
+# Project directory, must exist
+PROJECT_DIR: "/project"
+
+# Fastq directory which contains fastq.gz files corresponding to SAMPLES
+FASTQ_DIR: "/project/fastq"
