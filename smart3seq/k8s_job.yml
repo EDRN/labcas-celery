@@ -41,7 +41,7 @@ spec:
             type: Directory 
         - name: config-file
           hostPath:
-            path: /efs-ecs/src/labcas-celery/smart3seq/config-mdanderson-maitra.yaml
+            path: /efs-ecs/docker/src/labcas-celery/smart3seq/config-mdanderson-maitra.yaml
             type: File
         - name: star-dir
           hostPath:
