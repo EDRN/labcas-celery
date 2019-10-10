@@ -17,7 +17,7 @@ spec:
             - /bin/sh
             - -c
             - |
-              source activate smart-3seq && snakemake --snakefile pipeline.smk --configfile config.yaml -j 7
+              source activate smart-3seq && snakemake --snakefile pipeline.smk --configfile config.yaml -j 7 && mv /project/counts/counts.txt /project/counts/counts-@THE_SAMPLE@.txt && mv /project/counts/counts.txt.summary /project/counts/counts-@THE_SAMPLE@.txt.summary
           volumeMounts:
             - name: project-dir
               mountPath: /project

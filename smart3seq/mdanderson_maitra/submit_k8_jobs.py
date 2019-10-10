@@ -42,7 +42,7 @@ for f in fastq_files:
             
         # write k8s job spec
         _job_file = os.path.join(jobs_dir, "k8s_job_%s.yml" % sample)
-        _job_data = job_data.replace("@THE_CONFIG_FILE@", _config_file)
+        _job_data = job_data.replace("@THE_CONFIG_FILE@", _config_file).replace("@THE_SAMPLE@", sample)
         print("Writing job file: %s" % _job_file)
         with open(_job_file, 'w') as jf:
             jf.write(_job_data)
