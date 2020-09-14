@@ -38,7 +38,7 @@ spec:
             #path: /efs-ecs/docker/labcas/edrn/archive/UNMC_Pancreatic_Cancer_MxIF_Images/Liver/UNMCPC.Liver86rf3504_registered_tiff
             #path: /efs-ecs/docker/labcas/edrn/archive/UNMC_Pancreatic_Cancer_MxIF_Images/Primary/UNMCPC.PANC112rf4530_registered_tiff
             #path: /efs-ecs/docker/labcas/edrn/archive/UNMC_Pancreatic_Cancer_MxIF_Images/Primary/UNMCPC.PANC39rf7522_registered_tiff
-            path: /efs-ecs/docker/labcas/unmcpc/Liver/UNMCPC.Liver86rf3504/
+            path: /efs-ecs/docker/labcas/unmcpc/Liver/UNMCPC.Liver86rf3504_registered_tiff/
             type: Directory 
         - name: input-data
           hostPath:
@@ -46,5 +46,5 @@ spec:
             #path: /efs-ecs/docker/labcas/edrn/archive/UNMC_Pancreatic_Cancer_MxIF_Images/Liver/UNMCPC.Liver86rf3504
             #path: /efs-ecs/docker/labcas/edrn/archive/UNMC_Pancreatic_Cancer_MxIF_Images/Primary/UNMCPC.PANC112rf4530
             #path: /efs-ecs/docker/labcas/edrn/archive/UNMC_Pancreatic_Cancer_MxIF_Images/Primary/UNMCPC.PANC39rf7522
-            path: /efs-ecs/docker/labcas/unmcpc/Liver/UNMCPC.Liver86rf3504_registered_tiff/
+            path: /efs-ecs/docker/labcas/unmcpc/Liver/UNMCPC.Liver86rf3504/
             type: Directory
