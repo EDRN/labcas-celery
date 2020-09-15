@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 import boto3
 import logging
 import sys
+import airflow.hooks.S3_hook
 
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 
@@ -32,6 +33,10 @@ def download_from_S3(bucket=None, key=None, filepath=None):
 
 def upload_to_S3(filepath=None, bucket=None, key=None):
     s3.Bucket(bucket).upload_file(filepath, key)
+    
+#def upload_file_to_S3_with_hook(filepath=None, key=None, bucket=None):
+#    hook = airflow.hooks.S3_hook.S3Hook('edrn_s3')
+#    hook.load_file(filepath, key, bucket)
 
 
 t1 = BashOperator(
@@ -39,14 +44,22 @@ t1 = BashOperator(
     bash_command='echo "Scale EKS nodes up using value={{ dag_run.conf[\'conf1\'] }}" ',
     dag=dag)
 
-t2 = PythonOperator(
+#t2 = PythonOperator(
+#    task_id='download_data_from_s3',
+#    python_callable=download_from_S3,
+#    op_kwargs={
+#        'filepath': '/Users/cinquini/tmp/SAN_VM_SNAPSHOT.xls',
+#        'key': 'archive/Analysis_of_pancreatic_cancer_biomarkers_in_PLCO_set/Analysis_of_pancreatic_cancer_biomarkers_in_PLCO_set/SAN_VM_SNAPSHOT.xls',
+#        'bucket': 'edrn-labcas',
+#    },
+#    dag=dag)
+
+t2 = BashOperator(
     task_id='download_data_from_s3',
-    python_callable=download_from_S3,
-    op_kwargs={
-        'filepath': '/Users/cinquini/tmp/SAN_VM_SNAPSHOT.xls',
-        'key': 'archive/Analysis_of_pancreatic_cancer_biomarkers_in_PLCO_set/Analysis_of_pancreatic_cancer_biomarkers_in_PLCO_set/SAN_VM_SNAPSHOT.xls',
-        'bucket': 'edrn-labcas',
-    },
+    bash_command=('aws s3 sync'
+                  ' s3://edrn-labcas/archive/Analysis_of_pancreatic_cancer_biomarkers_in_PLCO_set/Analysis_of_pancreatic_cancer_biomarkers_in_PLCO_set/'
+                  ' /Users/cinquini/tmp/Analysis_of_pancreatic_cancer_biomarkers_in_PLCO_set/'
+                  ' --profile saml-pub'),
     dag=dag)
 
 # Note: on OSX must export TMPDIR to a path that Docker can mount (NOT /var/folders/tk...)
@@ -66,20 +79,18 @@ t3 = DockerOperator(
                 network_mode='bridge'
         )
 
-
 t4 = BashOperator(
     task_id='monitor_eks_job',
     bash_command='echo "Monitor batch job on EKS"',
     dag=dag)
 
-t5 = PythonOperator(
+
+t5 = BashOperator(
     task_id='upload_data_to_s3',
-    python_callable=upload_to_S3,
-    op_kwargs={
-        'filepath': '/Users/cinquini/tmp/SAN_VM_SNAPSHOT.xls',
-        'key': ('tmp/SAN_VM_SNAPSHOT.xls'),
-        'bucket': 'edrn-labcas',
-    },
+    bash_command=('aws s3 sync'
+                  ' /Users/cinquini/tmp/Analysis_of_pancreatic_cancer_biomarkers_in_PLCO_set/'
+                  ' s3://edrn-labcas/tmp/Analysis_of_pancreatic_cancer_biomarkers_in_PLCO_set/'
+                  ' --profile saml-pub'),
     dag=dag)
 
 t6 = BashOperator(
