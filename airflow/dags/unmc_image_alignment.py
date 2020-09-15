@@ -20,7 +20,7 @@ default_args = {
     'email': ['luca.cinquini@jpl.nasa.gov'],
     'email_on_failure': False,
     'email_on_retry': False,
-    'retries': 1,
+    'retries': 0,
     'retry_delay': timedelta(minutes=1),
 }
 
@@ -30,14 +30,13 @@ dag = DAG('UNMC_Image_Alignment', default_args=default_args)
 def download_from_S3(bucket=None, key=None, filepath=None):
     s3.Bucket(bucket).download_file(key, filepath)
 
-def upload_file_to_S3(filename, key, bucket_name):
-    s3.Bucket(bucket_name).upload_file(filename, key)
-
+def upload_to_S3(filepath=None, bucket=None, key=None):
+    s3.Bucket(bucket).upload_file(filepath, key)
 
 
 t1 = BashOperator(
     task_id='scale_nodes_up',
-    bash_command='echo "Scale EKS nodes up"',
+    bash_command='echo "Scale EKS nodes up using value={{ dag_run.conf[\'conf1\'] }}" ',
     dag=dag)
 
 t2 = PythonOperator(
@@ -73,9 +72,14 @@ t4 = BashOperator(
     bash_command='echo "Monitor batch job on EKS"',
     dag=dag)
 
-t5 = BashOperator(
+t5 = PythonOperator(
     task_id='upload_data_to_s3',
-    bash_command='echo "Upload output data to S3"',
+    python_callable=upload_to_S3,
+    op_kwargs={
+        'filepath': '/Users/cinquini/tmp/SAN_VM_SNAPSHOT.xls',
+        'key': ('tmp/SAN_VM_SNAPSHOT.xls'),
+        'bucket': 'edrn-labcas',
+    },
     dag=dag)
 
 t6 = BashOperator(
