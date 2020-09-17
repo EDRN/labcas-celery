@@ -1,5 +1,6 @@
 from airflow import DAG
-from airflow.operators import BashOperator, PythonOperator
+from airflow.operators.bash_operator import BashOperator
+from airflow.operators.python_operator import PythonOperator
 from airflow.operators.docker_operator import DockerOperator
 from datetime import datetime, timedelta
 import logging
@@ -23,7 +24,7 @@ default_args = {
     'retry_delay': timedelta(minutes=1)
 }
 
-dag = DAG("unmcpc",
+dag = DAG("unmcpc", 
           schedule_interval="@once",
           default_args=default_args)
 
@@ -35,13 +36,32 @@ t1 = BashOperator(
                   ' --profile {{ var.value.saml_profile }}'),
     dag=dag)
 
-t2 = BashOperator(
+t2 = DockerOperator(
+                task_id='helloworld_from_docker',
+                image='centos:7',
+                api_version='auto',
+                auto_remove=True,
+                tty=True,
+                environment={
+                        'HELLO_HOME': "/hello",
+                },
+                volumes=['/tmp/UNMCPC/Liver/UNMCPC.Liver86rf3504/:/input_data/',
+                         '/tmp/UNMCPC_registered/Liver/UNMCPC.Liver86rf3504/:/output_data/'],
+                command="bash -c 'for i in {1..5}; do echo hi; sleep 2; done'",
+                docker_url='unix://var/run/docker.sock',
+                network_mode='bridge',
+                default_args=default_args,
+                dag=dag
+        )
+
+
+t3 = BashOperator(
        task_id='upload_data_to_s3',
        bash_command=('aws s3 sync'
-                     ' /tmp/UNMCPC/Liver/UNMCPC.Liver86rf3504/'
+                     ' /tmp/UNMCPC_registered/Liver/UNMCPC.Liver86rf3504/'
                      ' {{ dag_run.conf["output"] }}'
                      ' --profile {{ var.value.saml_profile }}'),
     dag=dag)
 
-t1 >> t2
+t1 >> t2 >> t3
 
