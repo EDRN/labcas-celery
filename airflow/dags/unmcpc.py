@@ -28,11 +28,13 @@ dag = DAG("unmcpc",
           schedule_interval="@once",
           default_args=default_args)
 
+# {{ ts }}: execution data in ISO format
+
 t1 = BashOperator(
     task_id='download_data_from_s3',
     bash_command=('aws s3 sync'
                   ' {{ dag_run.conf["input"] }}'
-                  ' /tmp/UNMCPC/Liver/UNMCPC.Liver86rf3504/'
+                  ' /tmp/input_data/2020'
                   ' --profile {{ var.value.saml_profile }}'),
     dag=dag)
 
@@ -45,9 +47,10 @@ t2 = DockerOperator(
                 environment={
                         'HELLO_HOME': "/hello",
                 },
-                volumes=['/tmp/UNMCPC/Liver/UNMCPC.Liver86rf3504/:/input_data/',
-                         '/tmp/UNMCPC_registered/Liver/UNMCPC.Liver86rf3504/:/output_data/'],
-                command="bash -c 'for i in {1..5}; do echo hi; sleep 2; done'",
+                volumes=['/tmp/input_data/2020/:/input_data/2020',
+                         '/tmp/output_data/:/output_data'],
+                #command="bash -c 'for i in {1..5}; do echo hi; sleep 2; done'",
+                command='cp -R /input_data/2020 /output_data/.',
                 docker_url='unix://var/run/docker.sock',
                 network_mode='bridge',
                 default_args=default_args,
@@ -58,7 +61,7 @@ t2 = DockerOperator(
 t3 = BashOperator(
        task_id='upload_data_to_s3',
        bash_command=('aws s3 sync'
-                     ' /tmp/UNMCPC_registered/Liver/UNMCPC.Liver86rf3504/'
+                     ' /tmp/output_data/2020'
                      ' {{ dag_run.conf["output"] }}'
                      ' --profile {{ var.value.saml_profile }}'),
     dag=dag)
