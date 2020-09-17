@@ -27,11 +27,21 @@ dag = DAG("unmcpc",
           schedule_interval="@once",
           default_args=default_args)
 
-t2 = BashOperator(
+t1 = BashOperator(
     task_id='download_data_from_s3',
     bash_command=('aws s3 sync'
                   ' {{ dag_run.conf["input"] }}'
                   ' /tmp/UNMCPC/Liver/UNMCPC.Liver86rf3504/'
                   ' --profile {{ var.value.saml_profile }}'),
     dag=dag)
+
+t2 = BashOperator(
+       task_id='upload_data_to_s3',
+       bash_command=('aws s3 sync'
+                     ' /tmp/UNMCPC/Liver/UNMCPC.Liver86rf3504/'
+                     ' {{ dag_run.conf["output"] }}'
+                     ' --profile {{ var.value.saml_profile }}'),
+    dag=dag)
+
+t1 >> t2
 
