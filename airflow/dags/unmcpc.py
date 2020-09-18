@@ -33,7 +33,8 @@ dag = DAG("unmcpc",
 t1 = BashOperator(
     task_id='download_data_from_s3',
     bash_command=('aws s3 sync'
-                  ' {{ dag_run.conf["input"] }}'
+                  #' {{ dag_run.conf["input"] }}'
+                  ' {{ params.input }}'
                   ' /efs-ecs/docker/labcas/unmcpc/input_data/2020'
                   ' --profile {{ var.value.aws_profile }}'),
     dag=dag)
