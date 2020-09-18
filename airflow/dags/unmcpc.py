@@ -9,7 +9,7 @@ from airflow.models import Variable
 
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 
-aws_profile = Variable.get("saml_profile", default_var="default")
+aws_profile = Variable.get("aws_profile", default_var="default")
 logging.info("Using aws_profile=%s" % aws_profile)
 
 # Following are defaults which can be overridden later on
@@ -35,7 +35,7 @@ t1 = BashOperator(
     bash_command=('aws s3 sync'
                   ' {{ dag_run.conf["input"] }}'
                   ' /efs-ecs/docker/labcas/unmcpc/input_data/2020'
-                  ' --profile {{ var.value.saml_profile }}'),
+                  ' --profile {{ var.value.aws_profile }}'),
     dag=dag)
 
 t2 = BashOperator(
@@ -73,8 +73,9 @@ t3 = BashOperator(
        task_id='upload_data_to_s3',
        bash_command=('aws s3 sync'
                      ' /efs-ecs/docker/labcas/unmcpc/output_data/2020'
-                     ' {{ dag_run.conf["output"] }}'
-                     ' --profile {{ var.value.saml_profile }}'),
+                     #' {{ dag_run.conf["output"] }}'
+                     ' {{ params.output }}'
+                     ' --profile {{ var.value.aws_profile }}'),
     dag=dag)
 
 t1 >> t2 >> t3
