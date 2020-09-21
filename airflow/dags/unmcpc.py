@@ -6,11 +6,17 @@ from datetime import datetime, timedelta
 import logging
 import sys
 from airflow.models import Variable
+from kubernetes import client, config
+
 
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 
 aws_profile = Variable.get("aws_profile", default_var="default")
 logging.info("Using aws_profile=%s" % aws_profile)
+
+from kubernetes import client, config
+
+config.load_kube_config()
 
 LOCAL_DIR = "/efs-ecs/docker/labcas/unmcpc"
 input_dir = LOCAL_DIR + "/input_data/{{ params.execution_date }}"
@@ -47,7 +53,6 @@ t1 = BashOperator(
     dag=dag)
 
 # Executes the bash script to submit a Kubernetes batch job
-# The script uses the input and output folders retrieved from the environment
 t2 = BashOperator(
     task_id='submit_k8s_job',
     #environment={
@@ -59,6 +64,34 @@ t2 = BashOperator(
     #bash_command='{{ var.value.k8s_home }}/submit_k8s_job.sh ',
     bash_command="{{ var.value.k8s_home }}/submit_k8s_job.sh %s %s %s " % (input_dir, output_dir, execution_date),
     dag=dag)
+
+def monitor_k8s_job(execution_date):
+    '''Function to monitor a Kubernets job with a specific
+       value of the execution_date label.'''
+
+    v1 = client.BatchV1Api()
+    jobs = v1.list_namespaced_job(namespace='default', watch=False, label_selector='execution_date=2020')
+    for job in jobs.items:
+       npa = job.status.active
+       npf = job.status.failed
+       nps = job.status.succeeded
+       logging.info("Number of pods active, failed, succeded: %s, %s, %s" % (npa, npf, nps))
+       if nps and int(nps)==1:
+          logging.info("Pod succeeded, returning")
+          return 
+       elif npf and int(npf)==1:
+          raise AirflowFailException("Job failed!")
+       elif npa and int(npa)==1:
+          logging.info("Waiting for pod to stop running...")
+          time.sleep(10)
+    
+
+t3 = PythonOperator(
+        task_id='monitor_k8s_job',
+        python_callable=monitor_k8s_job,
+        op_kwargs={'execution_date': execution_date},
+        dag=dag)
+
 
 '''
 t2_ = DockerOperator(
@@ -83,13 +116,11 @@ t2_ = DockerOperator(
 
 # Uploads data from local disk to S3
 # Uses S3 output folder from dag run configuration
-t3 = BashOperator(
+t4 = BashOperator(
        task_id='upload_data_to_s3',
-       bash_command=('aws s3 sync'
-                     ' /efs-ecs/docker/labcas/unmcpc/output_data/2020'
-                     #' {{ dag_run.conf["output"] }}'
-                     ' {{ params.output }}'
-                     ' --profile {{ var.value.aws_profile }}')
+       bash_command=("aws s3 sync %s {{ params.output }} "
+                     "--profile {{ var.value.aws_profile }}" % output_dir),
+       dag=dag
       )
 
 t1 >> t2 
