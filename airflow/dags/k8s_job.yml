@@ -5,6 +5,7 @@ metadata:
   generateName: unmc-
   labels:
     app: labcas-unmc
+    execution_date: "${EXECUTION_DATE}"
 spec:
   template:
     spec:
@@ -34,14 +35,11 @@ spec:
       volumes: 
         - name: input-data
           hostPath:
-            #path: /efs-ecs/docker/labcas/edrn/archive/UNMC_Pancreatic_Cancer_MxIF_Images/Primary/UNMCPC.PANC39rf7522
             #path: /efs-ecs/docker/labcas/unmcpc/input_data/2020/
-            path: ${INPUT_DATA}
+            path: ${INPUT_DIR}
             type: Directory
         - name: output-data
           hostPath:
-            #path: /efs-ecs/docker/labcas/edrn/archive/UNMC_Pancreatic_Cancer_MxIF_Images/Primary/UNMCPC.PANC39rf7522_registered_tiff
             #path: /efs-ecs/docker/labcas/unmcpc/output_data/2020/
-            path: ${OUTPUT_DATA}
-            type: Directory 
-        
+            path: ${OUTPUT_DIR}
+            type: Directory
