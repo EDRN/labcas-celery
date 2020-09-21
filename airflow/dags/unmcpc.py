@@ -54,6 +54,12 @@ default_args = {
 dag = DAG("unmcpc", 
           default_args=default_args)
 
+# Creates input and output local directories
+t0 = BashOperator(
+    task_id='create_io_dirs',
+    bash_command=("mkdir -p %s %s " % (input_dir, output_dir)),
+    dag=dag)
+
 # Downloads data from S3 to local disk
 t1 = BashOperator(
     task_id='download_data_from_s3',
@@ -109,5 +115,5 @@ t4 = BashOperator(
        dag=dag
       )
 
-t1 >> t2 >> t3 >> t4 
+t0 >> t1 >> t2 >> t3 >> t4 
 
