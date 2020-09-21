@@ -5,7 +5,7 @@ metadata:
   generateName: unmc-
   labels:
     app: labcas-unmc
-    execution_date: "${EXECUTION_DATE}"
+    exec_date: "${EXEC_DATE}"
 spec:
   template:
     spec:
