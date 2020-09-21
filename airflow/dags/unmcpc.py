@@ -24,11 +24,17 @@ config.load_kube_config()
 # date = "{{ ts }}"
 LOCAL_DIR = "/efs-ecs/docker/labcas/unmcpc"
 
-input_dir = LOCAL_DIR + "/input_data/{{ params.exec_date }}"
-output_dir = LOCAL_DIR + "/output_data/{{ params.exec_date }}" 
-exec_date = "{{ params.exec_date }}"
 input_bucket = "{{ params.input }}"
 output_bucket = "{{ params.output }}"
+
+# execution date from task parameters or dag configuration
+exec_date = "{{ params.exec_date }}"
+# execution date as YYYY-MM-DD
+# xdate = "{{ ds }}"
+# execution date in ISO format
+#exec_date = "{{ ts }}"
+input_dir = LOCAL_DIR + "/input_data/" + exec_date
+output_dir = LOCAL_DIR + "/output_data/" + exec_date
 
 # Following are defaults which can be overridden later on
 default_args = {
@@ -67,9 +73,9 @@ def monitor_k8s_job(exec_date):
        value of the exec_date label.'''
 
     v1 = client.BatchV1Api()
-    jobs = v1.list_namespaced_job(namespace='default', watch=False, label_selector='exec_date=%s' % exec_date)
-    if jobs.items:
-       while True:
+    while True:
+       jobs = v1.list_namespaced_job(namespace='default', watch=False, label_selector='exec_date=%s' % exec_date)
+       if jobs.items:
           for job in jobs.items:
              npa = job.status.active
              npf = job.status.failed
@@ -85,8 +91,8 @@ def monitor_k8s_job(exec_date):
                 time.sleep(10)
              else:
                 raise AirflowFailException("Cannot monitor jobs reliably, exiting!")
-    else:
-        raise AirflowFailException("Cannot find any job matching label: exec_date=%s" % exec_date)
+       else:
+           raise AirflowFailException("Cannot find any job matching label: exec_date=%s" % exec_date)
     
 
 t3 = PythonOperator(
