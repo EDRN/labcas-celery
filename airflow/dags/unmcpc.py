@@ -23,6 +23,7 @@ config.load_kube_config()
 # execution date in ISO format
 # date = "{{ ts }}"
 LOCAL_DIR = "/efs-ecs/docker/labcas/unmcpc"
+
 input_dir = LOCAL_DIR + "/input_data/{{ params.exec_date }}"
 output_dir = LOCAL_DIR + "/output_data/{{ params.exec_date }}" 
 exec_date = "{{ params.exec_date }}"
@@ -33,7 +34,7 @@ output_bucket = "{{ params.output }}"
 default_args = {
     'owner': 'airflow',
     'depends_on_past': False,
-    'start_date': datetime.now(),
+    'start_date': '2020-09-21',
     'email': ['luca.cinquini@jpl.nasa.gov'],
     'email_on_failure': False,
     'email_on_retry': False,
