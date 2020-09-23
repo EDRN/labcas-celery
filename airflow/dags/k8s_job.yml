@@ -12,19 +12,14 @@ spec:
       restartPolicy: Never
       containers:
         - name: translator
-          image: edrn/labcas-celery-unmc-images
+          image: edrn/reg_mult
           imagePullPolicy: Always
-          command:
-            - python 
-            - -u 
-            - translate_multi_channel_frames_parallel.py 
-            - /input_data/ 
-            - /output_data/
+          #command: reg_mult
           volumeMounts:
             - name: output-data
-              mountPath: /output_data
+              mountPath: /usr/src/app/output
             - name: input-data
-              mountPath: /input_data
+              mountPath: /usr/src/app/input
           resources:
             requests:
               memory: "60Gi"
@@ -35,11 +30,9 @@ spec:
       volumes: 
         - name: input-data
           hostPath:
-            #path: /efs-ecs/docker/labcas/unmcpc/input_data/2020/
             path: ${INPUT_DIR}
             type: Directory
         - name: output-data
           hostPath:
-            #path: /efs-ecs/docker/labcas/unmcpc/output_data/2020/
             path: ${OUTPUT_DIR}
             type: Directory

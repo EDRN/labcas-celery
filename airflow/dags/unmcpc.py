@@ -22,7 +22,7 @@ config.load_kube_config()
 # date = "{{ ds }}"
 # execution date in ISO format
 # date = "{{ ts }}"
-LOCAL_DIR = "/efs-ecs/docker/labcas/unmcpc"
+LOCAL_DIR = "/efs-ecs/docker/labcas/unmcpc/"
 
 input_bucket = "{{ params.input }}"
 output_bucket = "{{ params.output }}"
@@ -33,8 +33,8 @@ exec_date = "{{ params.exec_date }}"
 # xdate = "{{ ds }}"
 # execution date in ISO format
 #exec_date = "{{ ts }}"
-input_dir = LOCAL_DIR + "/input_data/" + exec_date
-output_dir = LOCAL_DIR + "/output_data/" + exec_date
+input_dir = LOCAL_DIR + exec_date + "/input_data"
+output_dir = LOCAL_DIR + exec_date + "/output_data"
 
 # Following are defaults which can be overridden later on
 default_args = {
