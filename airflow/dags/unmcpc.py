@@ -22,10 +22,7 @@ config.load_kube_config()
 # date = "{{ ds }}"
 # execution date in ISO format
 # date = "{{ ts }}"
-LOCAL_DIR = "/efs-ecs/docker/labcas/unmcpc/"
-
-input_bucket = "{{ params.input }}"
-output_bucket = "{{ params.output }}"
+LOCAL_DIR = "/efs-ecs/docker/labcas/airflow/"
 
 # execution date from task parameters or dag configuration
 exec_date = "{{ params.exec_date }}"
@@ -33,8 +30,15 @@ exec_date = "{{ params.exec_date }}"
 # xdate = "{{ ds }}"
 # execution date in ISO format
 #exec_date = "{{ ts }}"
-input_dir = LOCAL_DIR + exec_date + "/input_data"
-output_dir = LOCAL_DIR + exec_date + "/output_data"
+
+# s3://edrn-labcas/sftp_data/UNMCPC/UNMCPC.LIV.3rf77.small.experiment.1/input
+input_bucket = "{{ params.input }}"
+# s3://edrn-labcas/sftp_data/UNMCPC/UNMCPC.LIV.3rf77.small.experiment.1/output
+output_bucket = "{{ params.output }}/{{ params.exec_date }}"
+
+# remove "s3://edrn-labcas/sftp_data/
+input_dir = LOCAL_DIR + "{{ params.exec_date }}" + "/input"
+output_dir = LOCAL_DIR + "{{ params.exec_date }}" + "/output"
 
 # Following are defaults which can be overridden later on
 default_args = {
