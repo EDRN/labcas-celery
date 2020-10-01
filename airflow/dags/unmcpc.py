@@ -40,14 +40,15 @@ output_dir = LOCAL_DIR + exec_date + "/output_data"
 default_args = {
     'owner': 'airflow',
     'depends_on_past': False,
-    'start_date': '2020-09-21',
+    'start_date': '2020-10-01',
     'email': ['luca.cinquini@jpl.nasa.gov'],
     'email_on_failure': False,
     'email_on_retry': False,
     'retries': 0,
-    'retry_delay': timedelta(minutes=1),
+    'catchup': False,
+    #'retry_delay': timedelta(minutes=1),
     'execution_timeout': timedelta(minutes=60),
-    'schedule_interval': '@once'
+    #'schedule_interval': '@once'
 }
 
 # the DAG
