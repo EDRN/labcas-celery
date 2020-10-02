@@ -51,8 +51,9 @@ default_args = {
     'retries': 0,
     'catchup': False,
     #'retry_delay': timedelta(minutes=1),
-    'execution_timeout': timedelta(minutes=60),
-    #'schedule_interval': '@once'
+    'execution_timeout': timedelta(minutes=600),
+    # schedule maually only
+    'schedule_interval': None
 }
 
 # the DAG
