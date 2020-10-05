@@ -22,23 +22,25 @@ config.load_kube_config()
 # date = "{{ ds }}"
 # execution date in ISO format
 # date = "{{ ts }}"
-LOCAL_DIR = "/efs-ecs/docker/labcas/airflow/"
+#AIRFLOW_DATA_DIR = "/efs-ecs/docker/labcas/airflow/"
+AIRFLOW_DATA_DIR = '{{ var.value.AIRFLOW_DATA_DIR }}'
 
 # execution date from task parameters or dag configuration
-exec_date = "{{ params.exec_date }}"
-# execution date as YYYY-MM-DD
-# xdate = "{{ ds }}"
-# execution date in ISO format
-#exec_date = "{{ ts }}"
+#exec_date = "{{ params.exec_date }}"
+# example: 20180101T000000
+exec_date = "{{ ts_nodash }}"
 
 # s3://edrn-labcas/sftp_data/UNMCPC/UNMCPC.LIV.3rf77.small.experiment.1/input
 input_bucket = "{{ params.input }}"
 # s3://edrn-labcas/sftp_data/UNMCPC/UNMCPC.LIV.3rf77.small.experiment.1/output
-output_bucket = "{{ params.output }}/{{ params.exec_date }}"
+output_bucket = "{{ params.output }}/%s" % exec_date
 
 # remove "s3://edrn-labcas/sftp_data/
-input_dir = LOCAL_DIR + "{{ params.exec_date }}" + "/input"
-output_dir = LOCAL_DIR + "{{ params.exec_date }}" + "/output"
+# TODO: 
+# input_dir = AIRFLOW_DATA_DIR + <experiment_name> + "/input"
+# outpur_dir = AIRFLOW_DATA_DIR + <experiment_name> + "/output" + exec_date
+input_dir = AIRFLOW_DATA_DIR + ("%s" % exec_date) + "/input"
+output_dir = AIRFLOW_DATA_DIR + ("%s" % exec_date) + "/output"
 
 # Following are defaults which can be overridden later on
 default_args = {
