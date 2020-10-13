@@ -86,27 +86,33 @@ def monitor_k8s_job(exec_date):
     '''Function to monitor a Kubernets job with a specific
        value of the exec_date label.'''
 
+    config.load_kube_config()
     v1 = client.BatchV1Api()
     while True:
-       jobs = v1.list_namespaced_job(namespace='default', watch=False, label_selector='exec_date=%s' % exec_date)
-       if jobs.items:
-          for job in jobs.items:
-             npa = job.status.active
-             npf = job.status.failed
-             nps = job.status.succeeded
-             logging.info("Number of pods active, failed, succeded: %s, %s, %s" % (npa, npf, nps))
-             if nps and int(nps)==1:
-                logging.info("Pod succeeded, returning")
-                return 
-             elif npf and int(npf)==1:
-                raise AirflowFailException("Job failed!")
-             elif npa and int(npa)==1:
-                logging.info("Waiting for pod to stop running...")
-                time.sleep(10)
-             else:
-                raise AirflowFailException("Cannot monitor jobs reliably, exiting!")
-       else:
-           raise AirflowFailException("Cannot find any job matching label: exec_date=%s" % exec_date)
+       try:
+          jobs = v1.list_namespaced_job(namespace='default', watch=False, label_selector='exec_date=%s' % exec_date)
+          if jobs.items:
+             for job in jobs.items:
+                npa = job.status.active
+                npf = job.status.failed
+                nps = job.status.succeeded
+                logging.info("Number of pods active, failed, succeded: %s, %s, %s" % (npa, npf, nps))
+                if nps and int(nps)==1:
+                   logging.info("Pod succeeded, returning")
+                   return 
+                elif npf and int(npf)==1:
+                   raise AirflowFailException("Job failed!")
+                elif npa and int(npa)==1:
+                   logging.info("Waiting for pod to stop running...")
+                   time.sleep(10)
+                else:
+                   raise AirflowFailException("Cannot monitor jobs reliably, exiting!")
+          else:
+              raise AirflowFailException("Cannot find any job matching label: exec_date=%s" % exec_date)
+       except client.rest.ApiException as e:
+          print(e)
+          print("Reloading the AWS credentials")
+          config.load_kube_config()
     
 
 t3 = PythonOperator(
