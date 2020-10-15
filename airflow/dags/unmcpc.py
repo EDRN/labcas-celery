@@ -42,7 +42,7 @@ output_bucket = "{{ params.output }}/%s" % exec_date
 input_dir = AIRFLOW_DATA_DIR + ("%s" % exec_date) + "/input"
 output_dir = AIRFLOW_DATA_DIR + ("%s" % exec_date) + "/output"
 
-# Following are defaults which can be overridden later on
+# default arguments passed to each task
 default_args = {
     'owner': 'airflow',
     'depends_on_past': False,
@@ -53,7 +53,7 @@ default_args = {
     'retries': 0,
     'catchup': False,
     #'retry_delay': timedelta(minutes=1),
-    'execution_timeout': timedelta(minutes=600),
+    'execution_timeout': timedelta(minutes=120),
     # schedule maually only
     'schedule_interval': None
 }
@@ -76,50 +76,27 @@ t1 = BashOperator(
     dag=dag)
 
 # Executes the bash script to submit a Kubernetes batch job
+# Note: must have a blank space at the end of bash_command if it is a script (with arguments)
 t2 = BashOperator(
     task_id='submit_k8s_job',
     # IMPORTANT: must have space after the .sh!
     bash_command="{{ var.value.k8s_home }}/submit_k8s_job.sh %s %s %s " % (input_dir, output_dir, exec_date),
+    xcom_push=True,
     dag=dag)
 
-def monitor_k8s_job(exec_date):
-    '''Function to monitor a Kubernets job with a specific
-       value of the exec_date label.'''
+# Monitor the K8s job by executing a script that uses the Python Kubernetes client
+# Note: the same code executed via a Python operator tends to looses its authorization...
+commands = """
+source activate airflow
+python -u {{ var.value.k8s_home }}/monitor_k8s_job.py %s
+""" % exec_date
 
-    config.load_kube_config()
-    v1 = client.BatchV1Api()
-    while True:
-       try:
-          jobs = v1.list_namespaced_job(namespace='default', watch=False, label_selector='exec_date=%s' % exec_date)
-          if jobs.items:
-             for job in jobs.items:
-                npa = job.status.active
-                npf = job.status.failed
-                nps = job.status.succeeded
-                logging.info("Number of pods active, failed, succeded: %s, %s, %s" % (npa, npf, nps))
-                if nps and int(nps)==1:
-                   logging.info("Pod succeeded, returning")
-                   return 
-                elif npf and int(npf)==1:
-                   raise AirflowFailException("Job failed!")
-                elif npa and int(npa)==1:
-                   logging.info("Waiting for pod to stop running...")
-                   time.sleep(10)
-                else:
-                   raise AirflowFailException("Cannot monitor jobs reliably, exiting!")
-          else:
-              raise AirflowFailException("Cannot find any job matching label: exec_date=%s" % exec_date)
-       except client.rest.ApiException as e:
-          print(e)
-          print("Reloading the AWS credentials")
-          config.load_kube_config()
-    
-
-t3 = PythonOperator(
-        task_id='monitor_k8s_job',
-        python_callable=monitor_k8s_job,
-        op_kwargs={'exec_date': exec_date},
-        dag=dag)
+t3 = BashOperator(
+    task_id='monitor_k8s_job',
+    # IMPORTANT: must have space after the .sh!
+    bash_command=commands,
+    xcom_push=True,
+    dag=dag)
 
 # Uploads data from local disk to S3
 t4 = BashOperator(
