@@ -37,7 +37,6 @@ def monitor_k8s_job(exec_date):
 
 if __name__ == "__main__":
 
-   # exec_date = "20201013T175908"
    exec_date = sys.argv[1]
    print("Monitoring for: %s" % exec_date)
 
