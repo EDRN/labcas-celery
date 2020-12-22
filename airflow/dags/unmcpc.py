@@ -22,8 +22,8 @@ config.load_kube_config()
 # date = "{{ ds }}"
 # execution date in ISO format
 # date = "{{ ts }}"
-#AIRFLOW_DATA_DIR = "/efs-ecs/docker/labcas/airflow/"
-AIRFLOW_DATA_DIR = '{{ var.value.AIRFLOW_DATA_DIR }}'
+AIRFLOW_DATA_DIR = "/efs-ecs/docker/labcas/airflow/"
+#AIRFLOW_DATA_DIR = '{{ var.value.AIRFLOW_DATA_DIR }}'
 
 # execution date from task parameters or dag configuration
 #exec_date = "{{ params.exec_date }}"
