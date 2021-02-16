@@ -76,6 +76,7 @@ output_volume_mount = VolumeMount(
 # Note: these are the templated_fields for KubernetesPodOperator: 
 # template_fields = ('cmds', 'arguments', 'env_vars', 'config_file')
 kpot = KubernetesPodOperator(
+                          pool="brsi_pool",
                           namespace='default',
                           #image="edrn/tensorflow-brsi",
                           image="300153749881.dkr.ecr.us-west-2.amazonaws.com/tensorflow-brsi",
