@@ -11,13 +11,15 @@ def main():
     for root, dirs, files in os.walk(DATA_DIR):
         if 'PROC' in root:
             for file in files:
-                fp = os.path.join(root, file)
-                print("Processing: %s" % fp)
+                (name, ext) = os.path.splitext(file)
+                if ext == '.dcm':
+                   fp = os.path.join(root, file)
+                   print("Processing: %s" % fp)
                 
-                image_path = fp.replace(STRING_OUT, STRING_IN)
-                command = "airflow trigger_dag  --conf '{\"image_path\": \"%s\"}' brsi" % image_path
-                print(f"Executing command={command}")
-                os.system(command)
+                   image_path = fp.replace(STRING_OUT, STRING_IN)
+                   command = "airflow trigger_dag  --conf '{\"image_path\": \"%s\"}' brsi" % image_path
+                   print(f"Executing command={command}")
+                   os.system(command)
        
 if __name__ == "__main__":
     main()
